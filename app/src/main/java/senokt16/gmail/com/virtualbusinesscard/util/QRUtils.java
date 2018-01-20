@@ -14,7 +14,7 @@ import senokt16.gmail.com.virtualbusinesscard.R;
 
 public class QRUtils {
 
-    Bitmap TextToImageEncode(Context context, String Value, int sizePixels) throws WriterException {
+    public static Bitmap TextToImageEncode(Context context, String Value, int sizePixels) throws WriterException {
         BitMatrix bitMatrix;
         try {
             bitMatrix = new MultiFormatWriter().encode(
