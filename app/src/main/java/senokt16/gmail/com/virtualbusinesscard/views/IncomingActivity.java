@@ -29,9 +29,8 @@ public class IncomingActivity extends AppCompatActivity {
         Intent intent = getIntent();
         InformationCard iC = new InformationCard(intent.getStringExtra(cardKey));
         PackageManager pm = this.getPackageManager();
-        sampleText = (TextView)findViewById(R.id.out_text);
-        System.out.println(iC.toString());
-        sampleText.setText(iC.toString());
+
+        
 
     }
 

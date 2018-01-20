@@ -36,6 +36,7 @@ public class InformationCard implements Serializable {
         information.add(new Pair<String, String>(key, value));
     }
 
+
     public ArrayList<Pair<String, String>> getAll(){
         return information;
     }

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 //TODO: Animated transition
                 //TODO: Attach contact info.
                 Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+
                 ActivityOptions options = ActivityOptions
                         .makeSceneTransitionAnimation(MainActivity.this, view.findViewById(R.id.thumbnail), "image");
                 startActivity(i, options.toBundle());
