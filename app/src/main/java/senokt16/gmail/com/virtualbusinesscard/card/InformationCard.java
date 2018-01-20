@@ -17,6 +17,7 @@ public class InformationCard {
     }
 
     public InformationCard(String data){
+        information = new ArrayList<>();
         String[] strings = data.split(CommunicationProtocol.NEW_LINE);
         for(String s : strings){
             String[] parts = s.split(CommunicationProtocol.DELIMITER);
