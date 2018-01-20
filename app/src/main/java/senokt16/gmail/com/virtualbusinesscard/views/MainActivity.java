@@ -1,5 +1,7 @@
 package senokt16.gmail.com.virtualbusinesscard.views;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -7,11 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.util.RecyclerItemClickListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +41,22 @@ public class MainActivity extends AppCompatActivity {
         cardsView = findViewById(R.id.cards_view);
         cardsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         cardsView.setAdapter(new CardsAdapter());
+        cardsView.addOnItemTouchListener(new RecyclerItemClickListener(this, cardsView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                //TODO: Animated transition
+                //TODO: Attach contact info.
+                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(MainActivity.this, view.findViewById(R.id.thumbnail), "image");
+                startActivity(i, options.toBundle());
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, "Long pressed item " + position, Toast.LENGTH_SHORT).show();
+            }
+        }));
     }
 
     @Override
