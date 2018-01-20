@@ -15,12 +15,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.google.zxing.WriterException;
+
 import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.util.QRUtils;
 import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final int MAX_IMAGE_HEIGHT_DP = 192;
+    private static final int MAX_IMAGE_HEIGHT_DP = 384;
     private static final int MID_IMAGE_HEIGHT_DP = 128;
     private static int MIN_IMAGE_HEIGHT_PX;
 
@@ -29,6 +32,7 @@ public class ProfileActivity extends AppCompatActivity {
     ViewGroup bottomSheet;
     BottomSheetBehavior behavior;
     Toolbar toolbar;
+    ViewGroup upButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +53,15 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
 
         profileImage = findViewById(R.id.profile_image);
+        qrImage = findViewById(R.id.qr_image);
         imageWrapper = findViewById(R.id.image_wrapper);
         bottomSheet = findViewById(R.id.foreground);
+        upButton = findViewById(R.id.button_up);
 
         final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
                 new int[] { android.R.attr.actionBarSize });
         MIN_IMAGE_HEIGHT_PX = (int) styledAttributes.getDimension(0, 0);
         styledAttributes.recycle();
-
-        Log.v("IMAGE_HEIGHT:", ""+MIN_IMAGE_HEIGHT_PX);
 
         setImageHeight(0);
         setImageTranslation(0);
@@ -80,11 +84,24 @@ public class ProfileActivity extends AppCompatActivity {
                 setImageTranslation(slideOffset);
             }
         });
+
+        try {
+            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, "Hello World", 100));
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
     }
 
     private void setImageOpacity(float offset) {
         profileImage.setAlpha(offset < 0 ? 1+offset : 1);
         toolbar.setAlpha(offset < 0 ? 0 : offset);
+        qrImage.setAlpha(offset < 0 ? 1f : 0f);
     }
 
     private void setImageHeight(float offset) {
@@ -98,9 +115,13 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setImageTranslation(float offset) {
-        int maxY = getResources().getDisplayMetrics().heightPixels/4 - MID_IMAGE_HEIGHT_DP /2;
-
-        imageWrapper.setTranslationY(maxY * (1-offset));
+        int totalHeight = getResources().getDisplayMetrics().heightPixels-Unit.dp(this,35);
+        int midY = totalHeight/4 - Unit.dp(this, MID_IMAGE_HEIGHT_DP) /2 + MIN_IMAGE_HEIGHT_PX;
+        int maxY = totalHeight/2 - Unit.dp(this, MAX_IMAGE_HEIGHT_DP) /2;
+        if (offset >= 0)
+            imageWrapper.setTranslationY(midY * (1-offset));
+        else
+            imageWrapper.setTranslationY(midY + (maxY-midY) * (-offset));
 
     }
 
