@@ -12,6 +12,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 
 public class ScanActivity extends AppCompatActivity {
 
@@ -47,13 +48,18 @@ public class ScanActivity extends AppCompatActivity {
             if (result.getContents() == null) {
                 Toast.makeText(this,    "Cancelled",Toast.LENGTH_LONG).show();
             } else {
-                updateText(result.getContents());
+                showNew(result.getContents());
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+    private void showNew(String iC){
+        Intent goToNextActivity = new Intent(getApplicationContext(), IncomingActivity.class);
+        goToNextActivity.putExtra("card", iC);
+        startActivity(goToNextActivity);
 
+    }
     private void updateText(String scanCode) {
         tvCardText.setText(scanCode);
     }

@@ -2,13 +2,14 @@ package senokt16.gmail.com.virtualbusinesscard.card;
 
 import android.util.Pair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by mjhutchinson on 20/01/18.
  */
 
-public class InformationCard {
+public class InformationCard implements Serializable {
 
     private ArrayList<Pair<String, String>> information;
 
@@ -17,6 +18,7 @@ public class InformationCard {
     }
 
     public InformationCard(String data){
+        information = new ArrayList<>();
         String[] strings = data.split(CommunicationProtocol.NEW_LINE);
         for(String s : strings){
             String[] parts = s.split(CommunicationProtocol.DELIMITER);
