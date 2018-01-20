@@ -1,22 +1,32 @@
 package senokt16.gmail.com.virtualbusinesscard.card;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by mjhutchinson on 20/01/18.
  */
 
+@Entity
 public class InformationCard {
 
+    @PrimaryKey
+    @NonNull
+    private String UUID;
     private ArrayList<Pair<String, String>> information;
 
     public InformationCard(){
+        UUID = java.util.UUID.randomUUID().toString();
         information = new ArrayList<>();
     }
 
     public InformationCard(String data){
+        UUID = java.util.UUID.randomUUID().toString();
         information = new ArrayList<>();
         String[] strings = data.split(CommunicationProtocol.NEW_LINE);
         for(String s : strings){
@@ -47,4 +57,19 @@ public class InformationCard {
         return out.toString();
     }
 
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public ArrayList<Pair<String, String>> getInformation() {
+        return information;
+    }
+
+    public void setInformation(ArrayList<Pair<String, String>> information) {
+        this.information = information;
+    }
 }

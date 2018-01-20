@@ -1,6 +1,7 @@
 package senokt16.gmail.com.virtualbusinesscard.views;
 
 import android.app.ActivityOptions;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,13 +10,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.concurrent.Executors;
+
 import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
+import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
 import senokt16.gmail.com.virtualbusinesscard.util.RecyclerItemClickListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +32,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // DataBase creation
+        final CardsDB cardsDB = Room.databaseBuilder(this, CardsDB.class, "CardsDB").build();
+
+        final InformationCard card = new InformationCard("N:Michael Hutchinson\nEM:mjh252@cam.ac.uk");
+
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                cardsDB.cardsDAO().insertCard(card);
+            }
+        });
+
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                final InformationCard cardback = cardsDB.cardsDAO().getAllCards().get(0);
+                Log.v("Data",cardback.toString());
+            }
+        });
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
