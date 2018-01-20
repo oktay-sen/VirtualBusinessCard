@@ -8,10 +8,6 @@ import android.widget.TextView;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
 
-/**
- * Created by MrHappy on 1/20/2018.
- */
-
 public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> {
     @Override
     public CardsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
