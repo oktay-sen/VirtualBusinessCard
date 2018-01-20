@@ -6,10 +6,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 
-/**
- * Created by mjhutchinson on 20/01/18.
- */
-
 public class DeepLinkUtils  {
 
     public static Intent newFacebookIntent(PackageManager pm, String user) {

@@ -28,18 +28,9 @@ public class ScanActivity extends AppCompatActivity {
         tvCardText = (TextView)findViewById(R.id.tv_code_text);
         btStartScan = (Button)findViewById(R.id.btn_scan);
 
-        btStartScan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startQRScanner();
-            }
-        });
 
     }
 
-    private void startQRScanner() {
-        new IntentIntegrator(this).initiateScan();
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

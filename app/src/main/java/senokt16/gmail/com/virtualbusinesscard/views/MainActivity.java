@@ -1,5 +1,6 @@
 package senokt16.gmail.com.virtualbusinesscard.views;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,11 +9,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.util.RecyclerItemClickListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ScanActivity.class));
+                    startQRScanner();
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
@@ -38,6 +46,22 @@ public class MainActivity extends AppCompatActivity {
         cardsView = findViewById(R.id.cards_view);
         cardsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         cardsView.setAdapter(new CardsAdapter());
+        cardsView.addOnItemTouchListener(new RecyclerItemClickListener(this, cardsView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                //TODO: Animated transition
+                //TODO: Attach contact info.
+                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(MainActivity.this, view.findViewById(R.id.thumbnail), "image");
+                startActivity(i, options.toBundle());
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, "Long pressed item " + position, Toast.LENGTH_SHORT).show();
+            }
+        }));
     }
 
     @Override
@@ -60,5 +84,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void startQRScanner() {
+        new IntentIntegrator(this).initiateScan();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Cancelled",Toast.LENGTH_SHORT).show();
+            } else {
+                Log.d("QR Result", result.getContents());
+                Toast.makeText(this, result.getContents(),Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
