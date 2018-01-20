@@ -3,6 +3,7 @@ package senokt16.gmail.com.virtualbusinesscard.views;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +33,7 @@ public class ProfileActivity extends AppCompatActivity {
     ViewGroup bottomSheet;
     BottomSheetBehavior behavior;
     Toolbar toolbar;
+    AppBarLayout appBar;
     ViewGroup upButton;
 
     @Override
@@ -39,9 +41,10 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         toolbar = findViewById(R.id.toolbar);
+        appBar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
         MIN_IMAGE_HEIGHT_PX = (int) styledAttributes.getDimension(0, 0);
         styledAttributes.recycle();
 
+        setImageOpacity(0);
         setImageHeight(0);
         setImageTranslation(0);
 
@@ -100,7 +104,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setImageOpacity(float offset) {
         profileImage.setAlpha(offset < 0 ? 1+offset : 1);
-        toolbar.setAlpha(offset < 0 ? 0 : offset);
+        appBar.getBackground().setAlpha(offset >= 0 ? (int)(offset*255) : 0);
+        appBar.setElevation(offset < 0.5 ? 0 : Unit.dp(this, 8) * (offset-.5f) * 2);
         qrImage.setAlpha(offset < 0 ? 1f : 0f);
     }
 

@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,11 +26,14 @@ import senokt16.gmail.com.virtualbusinesscard.R;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
 import senokt16.gmail.com.virtualbusinesscard.util.RecyclerItemClickListener;
+import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 
 public class MainActivity extends AppCompatActivity {
 
 
     RecyclerView cardsView;
+    private AppBarLayout appBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +60,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        appBar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
+        appBar.setElevation(Unit.dp(this, 8));
+        appBar.getBackground().setAlpha(255);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
