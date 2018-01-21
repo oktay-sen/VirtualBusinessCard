@@ -78,11 +78,15 @@ public class MainActivity extends AppCompatActivity {
 //            @Override
 //            public void run() {
 //                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
-//                Log.v("Data",cardback.get(0).toString());
+//                Log.v("Data",cardback.get(0).getUUID());
+//                List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
+//                Log.v("Data",getByID.get(0).toString());
 //                loading.setVisibility(View.GONE);
 //                cardsView.setAdapter(new CardsAdapter(cardback));
 //            }
 //        });
+
+
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);

@@ -22,4 +22,7 @@ public interface CardsDAO {
 
     @Query("SELECT * FROM InformationCard")
     List<InformationCard> getAllCards();
+
+    @Query("SELECT * FROM InformationCard where UUID=:UUID")
+    List<InformationCard> getCardById(String UUID);
 }
