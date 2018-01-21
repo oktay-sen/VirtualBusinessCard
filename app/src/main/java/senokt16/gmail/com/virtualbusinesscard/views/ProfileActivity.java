@@ -213,6 +213,7 @@ public class ProfileActivity extends AppCompatActivity {
         name.setText(infoCard.getAll().get(0).second);
         ColorGenerator generator = ColorGenerator.MATERIAL;
         Log.v("card values", infoCard.toString());
+        int color;
         if(infoCard.getAll().size() > 0 && !infoCard.getAll().get(0).second.equals("")) {
             String[] names = infoCard.getAll().get(0).second.split(" ");
             StringBuilder initials = new StringBuilder();
@@ -220,10 +221,12 @@ public class ProfileActivity extends AppCompatActivity {
                 initials.append(s.charAt(0));
             }
 
-            int color = generator.getColor(infoCard.getAll().get(0).second);
+            color = generator.getColor(infoCard.getAll().get(0).second);
 
             TextDrawable imageDrawable = TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color);
             profileImage.setImageDrawable(imageDrawable);
+        }else{
+            color = Color.LTGRAY;
         }
 
 
@@ -234,7 +237,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
         
         wrapper = findViewById(R.id.wrapper);
-        //TODO: wrapper.setBackground(color);
+        wrapper.setBackgroundColor(color);
     }
 
     private void setImageOpacity(float offset) {
