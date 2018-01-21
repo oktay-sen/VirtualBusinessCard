@@ -25,6 +25,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
 import senokt16.gmail.com.virtualbusinesscard.util.RecyclerItemClickListener;
@@ -63,16 +64,23 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         // DataBase creation
-        final CardsDB cardsDB = Room.databaseBuilder(this, CardsDB.class, "CardsDB").build();
+        final CardsDB cardsDB = Room.databaseBuilder(this, CardsDB.class, "CardsDB").fallbackToDestructiveMigration().build();
 
-        final InformationCard card = new InformationCard("N:Michael Hutchinson\nEM:mjh252@cam.ac.uk");
+        final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:A Card!\nEM:mjh252@cam.ac.uk\nPH:07446880103\nFB:mike.hutch.56\n");
+        final InformationCard card1 = new InformationCard();
+        card1.add(CommunicationProtocol.NAME_PREFIX, "A created card");
+        card1.add(CommunicationProtocol.DESCRIPTION_PREFIX, "Another Card!");
+        card1.add(CommunicationProtocol.ADDRESS_PREFIX, "60 High Street, Ringstead, PE36 5JU");
+        card1.add(CommunicationProtocol.EMAIL_PREFIX, "mjh252@cam.ac.uk");
+        card1.add(CommunicationProtocol.FACEBOOK_PREFIX, "mike.hutch.56");
 
-//        Executors.newSingleThreadExecutor().execute(new Runnable() {
-//            @Override
-//            public void run() {
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
 //                cardsDB.cardsDAO().insertCard(card);
-//            }
-//        });
+//                cardsDB.cardsDAO().insertCard(card1);
+            }
+        });
 //
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
