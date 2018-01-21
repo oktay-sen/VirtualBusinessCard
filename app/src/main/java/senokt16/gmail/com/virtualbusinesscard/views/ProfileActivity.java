@@ -108,11 +108,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        try {
-            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, "Hello World", 100));
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
         upButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,11 +115,19 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        InformationCard card = new InformationCard(getIntent().getStringExtra(CARDKEY));
+
         contactDetails = findViewById(R.id.contact_details);
         contactDetails.setLayoutManager(new LinearLayoutManager(this));
-        contactDetails.setAdapter(new ProfileAdapter(new InformationCard(getIntent().getStringExtra(CARDKEY)), this));
+        contactDetails.setAdapter(new ProfileAdapter(card, this));
         fromCardsAdapter = getIntent().hasExtra(ID);
         Log.v("Has UUID", Boolean.toString(fromCardsAdapter));
+
+        try {
+            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 100));
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setImageOpacity(float offset) {
