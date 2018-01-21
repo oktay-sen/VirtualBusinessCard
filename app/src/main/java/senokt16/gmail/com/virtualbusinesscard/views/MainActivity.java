@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private AppBarLayout appBar;
     ProgressBar loading;
     InformationCard queryCard;
+    // DataBase creation
+    final CardsDB cardsDB = CardsDB.getInstance(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
 
-        // DataBase creation
-        final CardsDB cardsDB = CardsDB.getInstance(this);
 
         final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:A Card!\nEM:mjh252@cam.ac.uk\nPH:07446880103\nFB:mike.hutch.56\n");
         final InformationCard card1 = new InformationCard();
@@ -88,29 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
 //        Executors.newSingleThreadExecutor().execute(new Runnable() {
 //            @Override
+//            public void run() {
 //                cardsDB.cardsDAO().insertCard(card);
 //                cardsDB.cardsDAO().insertCard(card1);
 //            }
 //        });
-//
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
-                Log.v("Data",cardback.get(0).getUUID());
-//                List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
-//                Log.v("Data",getByID.get(0).toString());
-                Handler h = new Handler(Looper.getMainLooper()) {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        super.handleMessage(msg);
-                        loading.setVisibility(View.GONE);
-                        cardsView.setAdapter(new CardsAdapter(cardback));
-                    }
-                };
-                h.sendEmptyMessage(0);
-            }
-        });
+
+
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -132,7 +116,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
+                if(cardback.size() > 0) {
+                    Log.v("Data",cardback.get(0).getUUID());
+//                  List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
+//                  Log.v("Data",getByID.get(0).toString());
+                }
+                
+                Handler h = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        loading.setVisibility(View.GONE);
+                        cardsView.setAdapter(new CardsAdapter(cardback));
+                    }
+                };
+                h.sendEmptyMessage(0);
+            }
+        });
         appBar.setElevation(Unit.dp(this, 8));
         appBar.getBackground().setAlpha(255);
     }
