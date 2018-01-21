@@ -16,8 +16,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -33,11 +35,32 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView cardsView;
     private AppBarLayout appBar;
+    ProgressBar loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loading = findViewById(R.id.loading);
+        cardsView = findViewById(R.id.cards_view);
+        cardsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        cardsView.addOnItemTouchListener(new RecyclerItemClickListener(this, cardsView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                //TODO: Animated transition
+                //TODO: Attach contact info.
+                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(MainActivity.this, view.findViewById(R.id.thumbnail), "image");
+                startActivity(i, options.toBundle());
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, "Long pressed item " + position, Toast.LENGTH_SHORT).show();
+            }
+        }));
 
         // DataBase creation
         final CardsDB cardsDB = Room.databaseBuilder(this, CardsDB.class, "CardsDB").build();
@@ -54,8 +77,10 @@ public class MainActivity extends AppCompatActivity {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                final InformationCard cardback = cardsDB.cardsDAO().getAllCards().get(0);
-                Log.v("Data",cardback.toString());
+                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
+                Log.v("Data",cardback.get(0).toString());
+                loading.setVisibility(View.GONE);
+                cardsView.setAdapter(new CardsAdapter(cardback));
             }
         });
 
@@ -76,25 +101,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cardsView = findViewById(R.id.cards_view);
-        cardsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        cardsView.setAdapter(new CardsAdapter());
-        cardsView.addOnItemTouchListener(new RecyclerItemClickListener(this, cardsView, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                //TODO: Animated transition
-                //TODO: Attach contact info.
-                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
-                ActivityOptions options = ActivityOptions
-                        .makeSceneTransitionAnimation(MainActivity.this, view.findViewById(R.id.thumbnail), "image");
-                startActivity(i, options.toBundle());
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "Long pressed item " + position, Toast.LENGTH_SHORT).show();
-            }
-        }));
     }
 
     @Override

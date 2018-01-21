@@ -28,7 +28,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="senokt16.gmail.com.virtualbusinesscard.views.MainActivity" />
         </activity>
-        <activity android:name=".views.ScanActivity" />
     </application>
 
 </manifest>
