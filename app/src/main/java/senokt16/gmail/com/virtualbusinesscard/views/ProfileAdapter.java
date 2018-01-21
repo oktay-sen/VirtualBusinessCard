@@ -11,7 +11,9 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,20 +27,19 @@ import java.util.ArrayList;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
+import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 
 import static android.support.v4.content.ContextCompat.startActivity;
 import static senokt16.gmail.com.virtualbusinesscard.util.ContactUtils.newContactIntent;
 import static senokt16.gmail.com.virtualbusinesscard.util.DeepLinkUtils.*;
 
-/**
- * Created by Ian_Tai on 2018-01-20.
- */
 
 public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
     private InformationCard iC;
     private ArrayList<Pair<String,String>> allList;
     private Context context;
     private PackageManager pm;
+    private boolean editMode = false;
     private boolean isCreated;
     public ProfileAdapter(InformationCard infoC, Context incContext, boolean created) {
         iC = infoC;
@@ -67,57 +68,72 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
         switch(currPair.first){
             case EMAIL_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_email_black_24dp);
-            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
-            holder.button.setText("Email: " + currPair.second);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Email");
+            holder.description.setText(currPair.second);
             break;
             case ADDRESS_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_map_marker);
-            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
-            holder.button.setText("Address: " + currPair.second);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Address");
+            holder.description.setText(currPair.second);
             break;
             case PHONE_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_phone_black_24dp);
-            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
-            holder.button.setText("Phone: " + currPair.second);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Phone");
+            holder.description.setText(currPair.second);
             break;
             case FACEBOOK_PREFIX: currIntent = newFacebookIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_facebook_box);
-            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
-            holder.button.setText("Facebook: " + currPair.second);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Facebook");
+            holder.description.setText(currPair.second);
             break;
             case TWITTER_PREFIX: currIntent = newTwitterIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_twitter_box);
-            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
-            holder.button.setText("Twitter: " + currPair.second);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Twitter");
+            holder.description.setText(currPair.second);
             break;
             case SNAPCHAT_PREFIX: currIntent = newSnapchatIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_snapchat);
-            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
-            holder.button.setText("Snapchat: " + currPair.second);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Snapchat");
+            holder.description.setText(currPair.second);
             break;
             case INSTAGRAM_PREFIX: currIntent = newInstagramIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_instagram);
-            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
-            holder.button.setText("Instagram: " + currPair.second);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Instagram");
+            holder.description.setText(currPair.second);
             break;
             case YOUTUBE_PREFIX: currIntent = newYoutubeIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_youtube_play);
-            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
-            holder.button.setText("Youtube: " + currPair.second);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("YouTube");
+            holder.description.setText(currPair.second);
             break;
             default: currIntent = null;
             break;
         }
 
-        holder.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(currIntent == null){
-                    return;
+        if (editMode) {
+            //holder.edit.startAnimation(AnimationUtils.loadAnimation(context, R.anim.edit_reveal));
+            holder.edit.setVisibility(View.VISIBLE);
+        } else {
+            //holder.edit.setTranslationX(Unit.dp(context, 48));
+            holder.edit.setVisibility(View.GONE);
+            holder.wrapper.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(currIntent == null){
+                        return;
+                    }
+                    context.startActivity(currIntent);
                 }
-                context.startActivity(currIntent);
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -126,11 +142,26 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
         return allList.size() - 2;
     }
 
+    public boolean toggleEdit() {
+        editMode = !editMode;
+        notifyDataSetChanged();
+        return editMode;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
-        Button button;
+        ImageView thumbnail, edit;
+        TextView title, description;
+        View underline;
+        ViewGroup wrapper;
         public ViewHolder(View itemView) {
             super(itemView);
-            button = itemView.findViewById(R.id.button_link);
+            thumbnail = itemView.findViewById(R.id.thumbnail);
+            title = itemView.findViewById(R.id.title);
+            description = itemView.findViewById(R.id.description);
+            edit = itemView.findViewById(R.id.action);
+            underline = itemView.findViewById(R.id.underline);
+            wrapper = itemView.findViewById(R.id.wrapper);
         }
     }
+
 }

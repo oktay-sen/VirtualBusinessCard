@@ -16,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -171,22 +173,23 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
+        if(!card.getAll().get(0).second.equals("")) {
+            String[] names = card.getAll().get(0).second.split(" ");
+            StringBuilder initials = new StringBuilder();
+            for (String s : names) {
+                initials.append(s.charAt(0));
+            }
 
-        String[] names = card.getAll().get(0).second.split(" ");
-        StringBuilder initials = new StringBuilder();
-        for (String s:names) {
-            initials.append(s.charAt(0));
-        }
+            int color = generator.getColor(card.getAll().get(0).second);
 
-        int color = generator.getColor(card.getAll().get(0).second);
-
-        profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color));
+            profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this, 128)).width(Unit.dp(this, 128)).endConfig().buildRound(initials.toString(), color));
 
 
-        try {
-            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 100));
-        } catch (WriterException e) {
-            e.printStackTrace();
+            try {
+                qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 100));
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -208,7 +211,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setImageTranslation(float offset) {
         int totalHeight = getResources().getDisplayMetrics().heightPixels-Unit.dp(this,35);
-        int midY = totalHeight/4 - Unit.dp(this, MID_IMAGE_HEIGHT_DP) /2 + MIN_IMAGE_HEIGHT_PX;
+        int midY = totalHeight/4 - Unit.dp(this, MID_IMAGE_HEIGHT_DP) /2 + MIN_IMAGE_HEIGHT_PX/2;
         int maxY = totalHeight/2 - Unit.dp(this, MAX_IMAGE_HEIGHT_DP) /2;
         if (offset >= 0)
             imageWrapper.setTranslationY(midY * (1-offset));
@@ -232,7 +235,35 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    public void editField(String fieldKey, String newData){
+    public void editField(String fieldKey, String newData) {
         infoCard.replace(fieldKey, newData);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_edit) {
+            //Do edit
+            if (((ProfileAdapter)contactDetails.getAdapter()).toggleEdit()) {
+                item.setIcon(R.drawable.ic_done_white_24dp);
+            } else {
+                item.setIcon(R.drawable.ic_edit_white_24dp);
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+
     }
 }
