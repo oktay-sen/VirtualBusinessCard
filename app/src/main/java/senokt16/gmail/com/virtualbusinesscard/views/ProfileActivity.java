@@ -20,8 +20,14 @@ import android.widget.RelativeLayout;
 
 import com.google.zxing.WriterException;
 
+import java.util.concurrent.Executors;
+
 import senokt16.gmail.com.virtualbusinesscard.R;
+
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
+
+import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
+
 import senokt16.gmail.com.virtualbusinesscard.util.QRUtils;
 import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 
@@ -46,6 +52,12 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getIntent() == null) {
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_profile);
         toolbar = findViewById(R.id.toolbar);
         appBar = findViewById(R.id.app_bar);
@@ -124,7 +136,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setImageHeight(float offset) {
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) imageWrapper.getLayoutParams();
-        Log.v("setImageHeight", "MIN: " + MIN_IMAGE_HEIGHT_PX + ", MID: " + Unit.dp(this, MID_IMAGE_HEIGHT_DP));
         if (offset < 0)
             params.height = (int) (Unit.dp(this, MID_IMAGE_HEIGHT_DP) + (Unit.dp(this, MAX_IMAGE_HEIGHT_DP) - Unit.dp(this, MID_IMAGE_HEIGHT_DP)) * (-offset));
         else

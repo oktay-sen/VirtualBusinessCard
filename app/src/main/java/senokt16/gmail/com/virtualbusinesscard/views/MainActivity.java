@@ -4,6 +4,9 @@ import android.app.ActivityOptions;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         // DataBase creation
-        final CardsDB cardsDB = Room.databaseBuilder(this, CardsDB.class, "CardsDB").build();
+        final CardsDB cardsDB = CardsDB.getInstance(this);
 
         final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:Cambridge Student\nEM:mjh252@cam.ac.uk\nAD:123 Road\nPH:07521638203\nFB:mike.hutch56");
 
@@ -87,9 +90,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
-                Log.v("Data",cardback.get(0).toString());
-                loading.setVisibility(View.GONE);
-                cardsView.setAdapter(new CardsAdapter(cardback));
+                Log.v("Data",cardback.get(0).getUUID());
+                List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
+                Log.v("Data",getByID.get(0).toString());
+                Handler h = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        loading.setVisibility(View.GONE);
+                        cardsView.setAdapter(new CardsAdapter(cardback));
+                    }
+                };
+                h.sendEmptyMessage(0);
             }
         });
 
@@ -97,8 +109,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         appBar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
-        appBar.setElevation(Unit.dp(this, 8));
-        appBar.getBackground().setAlpha(255);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +120,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        appBar.setElevation(Unit.dp(this, 8));
+        appBar.getBackground().setAlpha(255);
     }
 
     @Override
