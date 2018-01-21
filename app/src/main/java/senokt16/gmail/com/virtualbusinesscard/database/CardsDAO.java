@@ -29,7 +29,8 @@ public interface CardsDAO {
 
     @Query("SELECT * FROM InformationCard where created=:created")
     List<InformationCard> getCardsByCreated(boolean created);
-
+    
     @Query("DELETE FROM InformationCard")
     void deleteAll();
+
 }

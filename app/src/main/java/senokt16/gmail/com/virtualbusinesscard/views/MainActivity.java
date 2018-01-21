@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CARDKEY = "card";
     private static final String ID = "UUID";
+    private static final String CREATED = "CREATED";
     RecyclerView cardsView;
     private AppBarLayout appBar;
     ProgressBar loading;
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 //                  List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
 //                  Log.v("Data",getByID.get(0).toString());
                 }
-                
+
                 Handler h = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message msg) {
@@ -147,6 +148,13 @@ public class MainActivity extends AppCompatActivity {
         appBar.getBackground().setAlpha(255);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    
 
     private void startQRScanner() {
         new IntentIntegrator(this).initiateScan();

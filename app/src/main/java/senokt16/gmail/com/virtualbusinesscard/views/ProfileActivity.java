@@ -2,6 +2,9 @@ package senokt16.gmail.com.virtualbusinesscard.views;
 
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
@@ -23,7 +26,7 @@ import android.widget.RelativeLayout;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.zxing.WriterException;
-
+import static senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol.*;
 import java.util.concurrent.Executors;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
@@ -42,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static int MIN_IMAGE_HEIGHT_PX;
     private static final String CARDKEY = "card";
     private static final String ID = "UUID";
+    public static final String CREATED = "CREATED";
 
     ImageView profileImage, qrImage;
     RelativeLayout imageWrapper;
@@ -52,8 +56,11 @@ public class ProfileActivity extends AppCompatActivity {
     ViewGroup upButton;
     private RecyclerView contactDetails;
     FloatingActionButton fab;
+    private InformationCard infoCard;
     private static CardsDB cardsDB;
     private boolean fromCardsAdapter;
+    private boolean edited;
+    private boolean created;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,10 +126,13 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         final InformationCard card = new InformationCard(getIntent().getStringExtra(CARDKEY));
-
+        created = getIntent().getBooleanExtra(CREATED, false);
         contactDetails = findViewById(R.id.contact_details);
         contactDetails.setLayoutManager(new LinearLayoutManager(this));
-        contactDetails.setAdapter(new ProfileAdapter(card, this));
+
+        infoCard = new InformationCard(getIntent().getStringExtra(CARDKEY));
+        contactDetails.setAdapter(new ProfileAdapter(infoCard, this, created));
+
         fromCardsAdapter = getIntent().hasExtra(ID);
         Log.v("Has UUID", Boolean.toString(fromCardsAdapter));
 
@@ -131,39 +141,48 @@ public class ProfileActivity extends AppCompatActivity {
             fab.setVisibility(View.GONE);
         }
 
-        //TODO:Edits to card
-        if(!fromCardsAdapter) {
+
+        if(!fromCardsAdapter || edited) {
             cardsDB = CardsDB.getInstance(this);
         }
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 fab.setVisibility(View.GONE);
-                Snackbar.make(view, "Saving Card...", Snackbar.LENGTH_LONG)
+                //NOTE: not definitely saved yet
+                Snackbar.make(view, "Saved", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Executors.newSingleThreadExecutor().execute(new Runnable() {
                     @Override
                     public void run() {
                         Log.v("DBSave", "Saving...");
+                        card.setCreated(created);
                         cardsDB.cardsDAO().insertCard(card);
                         Log.v("DBSave", "Saved to DB");
+                        Handler h = new Handler(Looper.getMainLooper()) {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+
+                            }
+                        };
                     }
                 });
             }
         });
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
+        if(!card.getAll().get(0).second.equals("")) {
+            String[] names = card.getAll().get(0).second.split(" ");
+            StringBuilder initials = new StringBuilder();
+            for (String s : names) {
+                initials.append(s.charAt(0));
+            }
 
-        String[] names = card.getAll().get(0).second.split(" ");
-        StringBuilder initials = new StringBuilder();
-        for (String s:names) {
-            initials.append(s.charAt(0));
-        }
+            int color = generator.getColor(card.getAll().get(0).second);
 
-        int color = generator.getColor(card.getAll().get(0).second);
-
-        profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color));
+            profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this, 128)).width(Unit.dp(this, 128)).endConfig().buildRound(initials.toString(), color));
 
 
         try {
@@ -215,6 +234,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    public void editField(String fieldKey, String newData) {
+        infoCard.replace(fieldKey, newData);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -241,5 +263,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+
     }
 }
