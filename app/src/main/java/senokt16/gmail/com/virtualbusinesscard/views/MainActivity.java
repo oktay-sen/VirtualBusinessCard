@@ -93,17 +93,27 @@ public class MainActivity extends AppCompatActivity {
         }));
 
 
-        final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:A Card!\nEM:mjh252@cam.ac.uk\nPH:07446880103\nFB:mike.hutch.56\n");
+        final InformationCard card = new InformationCard("N:Ian Tai\nD:University of Cambridge\nEM:ihbt2@cam.ac.uk\nPH:07662554026\nFB:ian.tai.58\nSC:ian.tai\nLN:www.github.com/ianhtai\nIG:ianhtai");
+        final InformationCard card2 = new InformationCard();
+        card2.add(CommunicationProtocol.NAME_PREFIX, "Oktay Sen");
+        card2.add(CommunicationProtocol.DESCRIPTION_PREFIX, "University Of Edinburgh");
+        card2.add(CommunicationProtocol.EMAIL_PREFIX, "senokt.16@gmail.com");
+        card2.add(CommunicationProtocol.PHONE_PREFIX, "07599994408");
+        card2.add(CommunicationProtocol.FACEBOOK_PREFIX, "elektroktay");
+        card2.add(CommunicationProtocol.SNAPCHAT_PREFIX, "elektroktay");
+        card2.add(CommunicationProtocol.LINK_PREFIX, "www.github.com/oktay-sen");
+        card2.add(CommunicationProtocol.INSTAGRAM_PREFIX, "senokt16");
         final InformationCard card1 = new InformationCard();
         card1.add(CommunicationProtocol.NAME_PREFIX, "Michael Hutchinson");
-        card1.add(CommunicationProtocol.DESCRIPTION_PREFIX, "A nifty business card to transmit social media info!");
+        card1.add(CommunicationProtocol.DESCRIPTION_PREFIX, "Christs College Cambridge");
         card1.add(CommunicationProtocol.ADDRESS_PREFIX, "60 High Street, Ringstead, PE36 5JU");
         card1.add(CommunicationProtocol.EMAIL_PREFIX, "mjh252@cam.ac.uk");
         card1.add(CommunicationProtocol.PHONE_PREFIX, "0744880103");
         card1.add(CommunicationProtocol.FACEBOOK_PREFIX, "mike.hutch.56");
-        card1.add(CommunicationProtocol.SNAPCHAT_PREFIX, "michaelhutchinson");
+        card1.add(CommunicationProtocol.SNAPCHAT_PREFIX, "mikehutchinson");
         card1.add(CommunicationProtocol.LINK_PREFIX, "www.github.com/mjhutchinson");
         card1.add(CommunicationProtocol.INSTAGRAM_PREFIX, "abc123");
+        card1.add(CommunicationProtocol.LINK_PREFIX, "www.linkedin.com/in/michael-hutchinson");
 
 //        Executors.newSingleThreadExecutor().execute(new Runnable() {
 //            @Override
@@ -111,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
 //                cardsDB.cardsDAO().deleteAll();
 //                cardsDB.cardsDAO().insertCard(card);
 //                cardsDB.cardsDAO().insertCard(card1);
+//                cardsDB.cardsDAO().insertCard(card2);
 //                Log.v("INFO", cardsDB.cardsDAO().getAllCards().get(1).toString());
 //            }
 //        });

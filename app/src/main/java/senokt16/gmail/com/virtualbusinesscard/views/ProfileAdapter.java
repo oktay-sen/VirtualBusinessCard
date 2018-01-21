@@ -132,7 +132,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
             holder.description.setText(currPair.second);
             break;
             case LINK_PREFIX: currIntent = newLinkIntent(pm, currPair.second);
-            icon = context.getResources().getDrawable(R.drawable.ic_map_marker);
+            icon = context.getResources().getDrawable(R.drawable.ic_link_black_24dp);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Website");
             holder.description.setText(currPair.second);

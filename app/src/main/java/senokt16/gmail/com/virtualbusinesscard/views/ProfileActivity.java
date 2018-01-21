@@ -231,13 +231,17 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         try {
-            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, infoCard.toString(), 100));
+            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, infoCard.toString(), 200));
         } catch (WriterException e) {
             e.printStackTrace();
         }
-        
+
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *=0.8;
+
         wrapper = findViewById(R.id.wrapper);
-        wrapper.setBackgroundColor(color);
+        wrapper.setBackgroundColor(Color.HSVToColor(hsv));
     }
 
     private void setImageOpacity(float offset) {
