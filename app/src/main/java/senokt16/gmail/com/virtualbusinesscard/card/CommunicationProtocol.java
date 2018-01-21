@@ -17,6 +17,7 @@ public class CommunicationProtocol {
     public static final String SNAPCHAT_PREFIX = "SC";
     public static final String INSTAGRAM_PREFIX = "IG";
     public static final String YOUTUBE_PREFIX = "YT";
+    public static final String LINK_PREFIX = "LN";
 
     public static final String DELIMITER = ":";
     public static final String NEW_LINE = "\n";

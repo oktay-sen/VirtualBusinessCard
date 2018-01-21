@@ -114,6 +114,12 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
             holder.title.setText("YouTube");
             holder.description.setText(currPair.second);
             break;
+            case LINK_PREFIX: currIntent = newLinkIntent(pm, currPair.second);
+            icon = context.getResources().getDrawable(R.drawable.ic_map_marker);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Website");
+            holder.description.setText(currPair.second);
+            break;
             default: currIntent = null;
             break;
         }
