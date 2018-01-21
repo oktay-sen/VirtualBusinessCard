@@ -190,7 +190,7 @@ public class ProfileActivity extends AppCompatActivity {
         } catch (WriterException e) {
             e.printStackTrace();
         }
-    }
+    }}
 
     private void setImageOpacity(float offset) {
         profileImage.setAlpha(offset < 0 ? 1+offset : 1);
