@@ -20,6 +20,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.zxing.WriterException;
 
 import java.util.concurrent.Executors;
@@ -116,12 +118,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        final InformationCard card = new InformationCard(getIntent().getStringExtra(CARDKEY));
+
         contactDetails = findViewById(R.id.contact_details);
         contactDetails.setLayoutManager(new LinearLayoutManager(this));
-        final InformationCard infoCard = new InformationCard(getIntent().getStringExtra(CARDKEY));
-        contactDetails.setAdapter(new ProfileAdapter(infoCard, this));
+        contactDetails.setAdapter(new ProfileAdapter(card, this));
         fromCardsAdapter = getIntent().hasExtra(ID);
         Log.v("Has UUID", Boolean.toString(fromCardsAdapter));
+
         fab = findViewById(R.id.fab);
         if(fromCardsAdapter) {
             fab.setVisibility(View.GONE);
@@ -142,12 +146,31 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Log.v("DBSave", "Saving...");
-                        cardsDB.cardsDAO().insertCard(infoCard);
+                        cardsDB.cardsDAO().insertCard(card);
                         Log.v("DBSave", "Saved to DB");
                     }
                 });
             }
         });
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        String[] names = card.getAll().get(0).second.split(" ");
+        StringBuilder initials = new StringBuilder();
+        for (String s:names) {
+            initials.append(s.charAt(0));
+        }
+
+        int color = generator.getColor(card.getAll().get(0).second);
+
+        profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color));
+
+
+        try {
+            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 100));
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setImageOpacity(float offset) {
