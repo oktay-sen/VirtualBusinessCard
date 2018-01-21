@@ -67,22 +67,22 @@ public class MainActivity extends AppCompatActivity {
 
         final InformationCard card = new InformationCard("N:Michael Hutchinson\nEM:mjh252@cam.ac.uk");
 
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                cardsDB.cardsDAO().insertCard(card);
-            }
-        });
-
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
-                Log.v("Data",cardback.get(0).toString());
-                loading.setVisibility(View.GONE);
-                cardsView.setAdapter(new CardsAdapter(cardback));
-            }
-        });
+//        Executors.newSingleThreadExecutor().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                cardsDB.cardsDAO().insertCard(card);
+//            }
+//        });
+//
+//        Executors.newSingleThreadExecutor().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
+//                Log.v("Data",cardback.get(0).toString());
+//                loading.setVisibility(View.GONE);
+//                cardsView.setAdapter(new CardsAdapter(cardback));
+//            }
+//        });
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
