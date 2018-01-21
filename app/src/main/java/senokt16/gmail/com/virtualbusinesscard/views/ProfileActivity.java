@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.google.zxing.WriterException;
-
+import static senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol.*;
 import java.util.concurrent.Executors;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
@@ -48,8 +48,10 @@ public class ProfileActivity extends AppCompatActivity {
     ViewGroup upButton;
     private RecyclerView contactDetails;
     FloatingActionButton fab;
+    private InformationCard infoCard;
     private static CardsDB cardsDB;
     private boolean fromCardsAdapter;
+    private boolean edited;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         contactDetails = findViewById(R.id.contact_details);
         contactDetails.setLayoutManager(new LinearLayoutManager(this));
-        final InformationCard infoCard = new InformationCard(getIntent().getStringExtra(CARDKEY));
+        infoCard = new InformationCard(getIntent().getStringExtra(CARDKEY));
         contactDetails.setAdapter(new ProfileAdapter(infoCard, this));
         fromCardsAdapter = getIntent().hasExtra(ID);
         Log.v("Has UUID", Boolean.toString(fromCardsAdapter));
@@ -125,8 +127,8 @@ public class ProfileActivity extends AppCompatActivity {
             fab.setVisibility(View.GONE);
         }
 
-        //TODO:Edits to card
-        if(!fromCardsAdapter) {
+
+        if(!fromCardsAdapter || edited) {
             cardsDB = CardsDB.getInstance(this);
         }
 
@@ -188,5 +190,9 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void editField(String fieldKey, String newData){
+        infoCard.replace(fieldKey, newData);
     }
 }

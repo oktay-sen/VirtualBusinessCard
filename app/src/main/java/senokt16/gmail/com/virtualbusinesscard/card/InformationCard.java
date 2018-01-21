@@ -3,6 +3,7 @@ package senokt16.gmail.com.virtualbusinesscard.card;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.Pair;
 
 import java.io.Serializable;
@@ -51,7 +52,17 @@ public class InformationCard {
     public void add(String key, String value){
         information.add(new Pair<String, String>(key, value));
     }
-
+    public void replace(String key, String value){
+        for(int i = 0; i < information.size(); i++){
+            if(information.get(i).first.equals(key)){
+                Pair<String,String> newP = new Pair<String,String>(key, value);
+                information.remove(i);
+                information.add(i, newP);
+                return;
+            }
+        }
+        Log.v("ERROR", "Replace field not found");
+    }
 
     public ArrayList<Pair<String, String>> getAll(){
         return information;

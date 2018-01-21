@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 //                  List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
 //                  Log.v("Data",getByID.get(0).toString());
                 }
-                
+
                 Handler h = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message msg) {
