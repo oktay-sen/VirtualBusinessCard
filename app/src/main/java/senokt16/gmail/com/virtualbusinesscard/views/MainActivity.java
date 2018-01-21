@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,8 +16,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -25,20 +29,52 @@ import senokt16.gmail.com.virtualbusinesscard.R;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
 import senokt16.gmail.com.virtualbusinesscard.util.RecyclerItemClickListener;
+import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private static final String CARDKEY = "card";
+    private static final String ID = "UUID";
     RecyclerView cardsView;
+    private AppBarLayout appBar;
+    ProgressBar loading;
+    InformationCard queryCard;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        loading = findViewById(R.id.loading);
+        cardsView = findViewById(R.id.cards_view);
+        cardsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));cardsView.addOnItemTouchListener(new RecyclerItemClickListener(this, cardsView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                final int pos = position;
+                //TODO: Animated transition
+                //TODO: Attach contact info.
+                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+
+                InformationCard getInfo = ((CardsAdapter)cardsView.getAdapter()).getSingleCard(position);
+
+                i.putExtra(CARDKEY, getInfo.toString());
+                i.putExtra(ID, getInfo.getUUID());
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(MainActivity.this, view.findViewById(R.id.thumbnail), "image");
+
+                startActivity(i, options.toBundle());
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, "Long pressed item " + position, Toast.LENGTH_SHORT).show();
+            }
+        }));
+
         // DataBase creation
         final CardsDB cardsDB = Room.databaseBuilder(this, CardsDB.class, "CardsDB").build();
 
-        final InformationCard card = new InformationCard("N:Michael Hutchinson\nEM:mjh252@cam.ac.uk");
+        final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:Cambridge Student\nEM:mjh252@cam.ac.uk\nAD:123 Road\nPH:07521638203\nFB:mike.hutch56");
 
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
@@ -50,14 +86,19 @@ public class MainActivity extends AppCompatActivity {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                final InformationCard cardback = cardsDB.cardsDAO().getAllCards().get(0);
-                Log.v("Data",cardback.toString());
+                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
+                Log.v("Data",cardback.get(0).toString());
+                loading.setVisibility(View.GONE);
+                cardsView.setAdapter(new CardsAdapter(cardback));
             }
         });
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        appBar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
+        appBar.setElevation(Unit.dp(this, 8));
+        appBar.getBackground().setAlpha(255);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -69,26 +110,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cardsView = findViewById(R.id.cards_view);
-        cardsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        cardsView.setAdapter(new CardsAdapter());
-        cardsView.addOnItemTouchListener(new RecyclerItemClickListener(this, cardsView, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                //TODO: Animated transition
-                //TODO: Attach contact info.
-                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
-
-                ActivityOptions options = ActivityOptions
-                        .makeSceneTransitionAnimation(MainActivity.this, view.findViewById(R.id.thumbnail), "image");
-                startActivity(i, options.toBundle());
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "Long pressed item " + position, Toast.LENGTH_SHORT).show();
-            }
-        }));
     }
 
     @Override
@@ -134,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showNew(String iC){
         Intent goToNextActivity = new Intent(getApplicationContext(), ProfileActivity.class);
-        goToNextActivity.putExtra("card", iC);
+        goToNextActivity.putExtra(CARDKEY, iC);
         startActivity(goToNextActivity);
 
     }

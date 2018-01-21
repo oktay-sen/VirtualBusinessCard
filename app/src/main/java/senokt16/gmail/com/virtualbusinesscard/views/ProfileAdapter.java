@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
         Pair<String,String> currPair = allList.get(position+2);
         final Intent currIntent;
         Drawable icon;
-
+        Log.v("Check", "arrivedAtViewHolder");
         switch(currPair.first){
             case EMAIL_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_email_black_24dp);
@@ -115,6 +116,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
+        Log.v("items", allList.toString());
         return allList.size() - 2;
     }
 
