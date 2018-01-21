@@ -204,14 +204,16 @@ public class ProfileActivity extends AppCompatActivity {
             int color = generator.getColor(infoCard.getAll().get(0).second);
 
             profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this, 128)).width(Unit.dp(this, 128)).endConfig().buildRound(initials.toString(), color));
-
-
-            try {
-                qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, infoCard.toString(), 100));
-            } catch (WriterException e) {
-                e.printStackTrace();
-            }
         }
+
+
+        try {
+            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, infoCard.toString(), 100));
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private void setImageOpacity(float offset) {
