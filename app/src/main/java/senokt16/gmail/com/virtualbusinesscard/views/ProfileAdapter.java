@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -152,6 +154,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
         if (editMode) {
             //holder.edit.startAnimation(AnimationUtils.loadAnimation(context, R.anim.edit_reveal));
             holder.edit.setVisibility(View.VISIBLE);
+            holder.description.setKeyListener((KeyListener) holder.description.getTag());
         } else {
             //holder.edit.setTranslationX(Unit.dp(context, 48));
             holder.edit.setVisibility(View.GONE);
@@ -164,6 +167,8 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
                     context.startActivity(currIntent);
                 }
             });
+            holder.description.setTag(holder.description.getKeyListener());
+            holder.description.setKeyListener(null);
         }
         if (position == getItemCount()-1 || currPair.first.equals(DESCRIPTION_PREFIX)) {
             holder.underline.setVisibility(View.INVISIBLE);
@@ -186,7 +191,8 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView thumbnail, edit;
-        TextView title, description;
+        TextView title;
+        EditText description;
         View underline;
         ViewGroup wrapper, textWrapper;
         public ViewHolder(View itemView) {
