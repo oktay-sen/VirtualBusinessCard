@@ -47,7 +47,8 @@ public class ProfileActivity extends AppCompatActivity {
     AppBarLayout appBar;
     ViewGroup upButton;
     private RecyclerView contactDetails;
-
+    FloatingActionButton fab;
+    private static CardsDB cardsDB;
     private boolean fromCardsAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
         appBar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
@@ -122,9 +116,36 @@ public class ProfileActivity extends AppCompatActivity {
 
         contactDetails = findViewById(R.id.contact_details);
         contactDetails.setLayoutManager(new LinearLayoutManager(this));
-        contactDetails.setAdapter(new ProfileAdapter(new InformationCard(getIntent().getStringExtra(CARDKEY)), this));
+        final InformationCard infoCard = new InformationCard(getIntent().getStringExtra(CARDKEY));
+        contactDetails.setAdapter(new ProfileAdapter(infoCard, this));
         fromCardsAdapter = getIntent().hasExtra(ID);
         Log.v("Has UUID", Boolean.toString(fromCardsAdapter));
+        fab = findViewById(R.id.fab);
+        if(fromCardsAdapter) {
+            fab.setVisibility(View.GONE);
+        }
+
+        //TODO:Edits to card
+        if(!fromCardsAdapter) {
+            cardsDB = CardsDB.getInstance(this);
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fab.setVisibility(View.GONE);
+                Snackbar.make(view, "Saving Card...", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                Executors.newSingleThreadExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.v("DBSave", "Saving...");
+                        cardsDB.cardsDAO().insertCard(infoCard);
+                        Log.v("DBSave", "Saved to DB");
+                    }
+                });
+            }
+        });
     }
 
     private void setImageOpacity(float offset) {

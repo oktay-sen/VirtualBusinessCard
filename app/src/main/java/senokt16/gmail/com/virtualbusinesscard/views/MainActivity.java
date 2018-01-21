@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private AppBarLayout appBar;
     ProgressBar loading;
     InformationCard queryCard;
+    // DataBase creation
+    final CardsDB cardsDB = CardsDB.getInstance(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
 
-        // DataBase creation
-        final CardsDB cardsDB = CardsDB.getInstance(this);
+
 
         final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:Cambridge Student\nEM:mjh252@cam.ac.uk\nAD:123 Road\nPH:07521638203\nFB:mike.hutch56");
 
@@ -86,24 +87,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
-                Log.v("Data",cardback.get(0).getUUID());
-                List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
-                Log.v("Data",getByID.get(0).toString());
-                Handler h = new Handler(Looper.getMainLooper()) {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        super.handleMessage(msg);
-                        loading.setVisibility(View.GONE);
-                        cardsView.setAdapter(new CardsAdapter(cardback));
-                    }
-                };
-                h.sendEmptyMessage(0);
-            }
-        });
+
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -125,7 +109,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
+                Log.v("Data",cardback.get(0).getUUID());
+                List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
+                Log.v("Data",getByID.get(0).toString());
+                Handler h = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        loading.setVisibility(View.GONE);
+                        cardsView.setAdapter(new CardsAdapter(cardback));
+                    }
+                };
+                h.sendEmptyMessage(0);
+            }
+        });
         appBar.setElevation(Unit.dp(this, 8));
         appBar.getBackground().setAlpha(255);
     }
