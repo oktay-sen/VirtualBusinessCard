@@ -10,16 +10,23 @@ import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,17 +47,24 @@ public class MainActivity extends AppCompatActivity {
     private static final String CARDKEY = "card";
     private static final String ID = "UUID";
     private static final String CREATED = "CREATED";
+    private static final String NEWCARD = "NEW";
     RecyclerView cardsView;
     private AppBarLayout appBar;
     ProgressBar loading;
     InformationCard queryCard;
     // DataBase creation
     final CardsDB cardsDB = CardsDB.getInstance(this);
+    private boolean createdToggle = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+
 
         loading = findViewById(R.id.loading);
         cardsView = findViewById(R.id.cards_view);
@@ -179,4 +193,58 @@ public class MainActivity extends AppCompatActivity {
         goToNextActivity.putExtra(CARDKEY, iC);
         startActivity(goToNextActivity);
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if(id == R.id.new_card){
+            Intent goToNextActivity = new Intent(getApplicationContext(), ProfileActivity.class);
+            InformationCard tempCreate = new InformationCard();
+            Log.v("iC", tempCreate.toString());
+            goToNextActivity.putExtra(CARDKEY, tempCreate.toString());
+            goToNextActivity.putExtra(CREATED, true);
+            goToNextActivity.putExtra(NEWCARD, true);
+            startActivity(goToNextActivity);
+        }
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.profile_filter) {
+
+            Executors.newSingleThreadExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    final List<InformationCard> cardback;
+                    if(createdToggle){
+                        cardback  = cardsDB.cardsDAO().getCardsByCreated(true);
+                    }
+                    else {
+                        cardback = cardsDB.cardsDAO().getAllCards();
+                    }
+                    createdToggle = !createdToggle;
+                    if(cardback.size() > 0) {
+                        Log.v("Data",cardback.get(0).getUUID());
+//                  List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
+//                  Log.v("Data",getByID.get(0).toString());
+                    }
+
+                    Handler h = new Handler(Looper.getMainLooper()) {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            loading.setVisibility(View.GONE);
+                            cardsView.setAdapter(new CardsAdapter(cardback));
+                        }
+                    };
+                    h.sendEmptyMessage(0);
+                }
+            });
+            (cardsView.getAdapter()).notifyDataSetChanged();
+        }
+
+
+        return super.onOptionsItemSelected(item);
+
+    }
+
 }

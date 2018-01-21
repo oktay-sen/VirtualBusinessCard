@@ -34,10 +34,13 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.zxing.WriterException;
 import static senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol.*;
+
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
 
+import senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 
 import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
@@ -56,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private boolean editMode = false;
 
+    private static String NEWCARD = "NEW";
     ImageView profileImage, qrImage;
     RelativeLayout imageWrapper;
     ViewGroup bottomSheet;
@@ -142,13 +146,29 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        final InformationCard card = new InformationCard(getIntent().getStringExtra(CARDKEY));
-
         created = getIntent().getBooleanExtra(CREATED, false);
         contactDetails = findViewById(R.id.contact_details);
         contactDetails.setLayoutManager(new LinearLayoutManager(this));
 
         infoCard = new InformationCard(getIntent().getStringExtra(CARDKEY));
+        if(created){
+            if(getIntent().hasExtra(NEWCARD)){
+                if(getIntent().getBooleanExtra(NEWCARD, true)){
+                    infoCard.add(CommunicationProtocol.NAME_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.DESCRIPTION_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.EMAIL_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.ADDRESS_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.PHONE_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.FACEBOOK_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.TWITTER_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.SNAPCHAT_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.INSTAGRAM_PREFIX, "");
+                    infoCard.add(CommunicationProtocol.YOUTUBE_PREFIX, "");
+                }
+            }
+        }
+        Log.v("Infocard click ", infoCard.getAll().toString());
+        infoCard.setCreated(created);
         contactDetails.setAdapter(new ProfileAdapter(infoCard, this, created));
 
         fromCardsAdapter = getIntent().hasExtra(ID);
@@ -175,8 +195,8 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Log.v("DBSave", "Saving...");
-                        card.setCreated(created);
-                        cardsDB.cardsDAO().insertCard(card);
+                        infoCard.setCreated(created);
+                        cardsDB.cardsDAO().insertCard(infoCard);
                         Log.v("DBSave", "Saved to DB");
                         Handler h = new Handler(Looper.getMainLooper()) {
                             @Override
@@ -190,26 +210,29 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        name.setText(card.getAll().get(0).second);
+        name.setText(infoCard.getAll().get(0).second);
         ColorGenerator generator = ColorGenerator.MATERIAL;
-        if(!card.getAll().get(0).second.equals("")) {
-            String[] names = card.getAll().get(0).second.split(" ");
+        Log.v("card values", infoCard.toString());
+        if(infoCard.getAll().size() > 0 && !infoCard.getAll().get(0).second.equals("")) {
+            String[] names = infoCard.getAll().get(0).second.split(" ");
             StringBuilder initials = new StringBuilder();
             for (String s : names) {
                 initials.append(s.charAt(0));
             }
 
-            int color = generator.getColor(card.getAll().get(0).second);
+            int color = generator.getColor(infoCard.getAll().get(0).second);
 
             TextDrawable imageDrawable = TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color);
             profileImage.setImageDrawable(imageDrawable);
         }
 
+
         try {
-            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 200));
+            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, infoCard.toString(), 100));
         } catch (WriterException e) {
             e.printStackTrace();
         }
+        
         wrapper = findViewById(R.id.wrapper);
         //TODO: wrapper.setBackground(color);
     }

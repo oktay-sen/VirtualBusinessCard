@@ -5,6 +5,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_profile">ProfileActivity</string>
+<<<<<<< HEAD
 
     <string-array name="fields">
         <item>Name</item>
@@ -18,4 +19,11 @@
         <item>Instagram</item>
         <item>YouTube</item>
     </string-array>
+=======
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+>>>>>>> 2d163b9f837b47d4f9bfb9897f2eb4b9272937d6
 </resources>
