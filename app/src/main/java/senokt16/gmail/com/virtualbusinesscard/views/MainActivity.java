@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 //TODO: Attach contact info.
                 Intent i = new Intent(MainActivity.this, ProfileActivity.class);
 
-                InformationCard getInfo = ((CardsAdapter)cardsView.getAdapter()).getSingleCard(position);
+                InformationCard getInfo = ((CardsAdapter)cardsView.getAdapter()).getSingleCard(pos);
 
                 i.putExtra(CARDKEY, getInfo.toString());
                 i.putExtra(ID, getInfo.getUUID());
@@ -83,16 +83,20 @@ public class MainActivity extends AppCompatActivity {
         card1.add(CommunicationProtocol.NAME_PREFIX, "A created card");
         card1.add(CommunicationProtocol.DESCRIPTION_PREFIX, "Another Card!");
         card1.add(CommunicationProtocol.ADDRESS_PREFIX, "60 High Street, Ringstead, PE36 5JU");
-        card1.add(CommunicationProtocol.EMAIL_PREFIX, "mjh252@cam.ac.uk");
-        card1.add(CommunicationProtocol.FACEBOOK_PREFIX, "mike.hutch.56");
+        card1.add(CommunicationProtocol.EMAIL_PREFIX, "abc123@cam.ac.uk");
+        card1.add(CommunicationProtocol.FACEBOOK_PREFIX, "gggg.hutch.56");
+        card1.add(CommunicationProtocol.LINK_PREFIX, "www.github.com/mjhutchinson");
+        card1.add(CommunicationProtocol.INSTAGRAM_PREFIX, "abc123");
 
-//        Executors.newSingleThreadExecutor().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                cardsDB.cardsDAO().insertCard(card);
-//                cardsDB.cardsDAO().insertCard(card1);
-//            }
-//        });
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                cardsDB.cardsDAO().deleteAll();
+                cardsDB.cardsDAO().insertCard(card);
+                cardsDB.cardsDAO().insertCard(card1);
+                Log.v("INFO", cardsDB.cardsDAO().getAllCards().get(1).toString());
+            }
+        });
 
 
 

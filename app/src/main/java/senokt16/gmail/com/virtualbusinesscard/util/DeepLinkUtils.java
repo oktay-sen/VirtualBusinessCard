@@ -46,4 +46,10 @@ public class DeepLinkUtils  {
         return new Intent(Intent.ACTION_VIEW, uri);
     }
 
+    public static Intent newLinkIntent(PackageManager pm, String link){
+        String url = "https://" + link;
+        Uri uri = Uri.parse(url);
+        return new Intent(Intent.ACTION_VIEW, uri);
+    }
+
 }
