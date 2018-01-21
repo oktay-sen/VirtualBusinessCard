@@ -74,17 +74,17 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 //
-//        Executors.newSingleThreadExecutor().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
-//                Log.v("Data",cardback.get(0).getUUID());
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
+                Log.v("Data",cardback.get(0).getUUID());
 //                List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
 //                Log.v("Data",getByID.get(0).toString());
-//                loading.setVisibility(View.GONE);
-//                cardsView.setAdapter(new CardsAdapter(cardback));
-//            }
-//        });
+                loading.setVisibility(View.GONE);
+                cardsView.setAdapter(new CardsAdapter(cardback));
+            }
+        });
 
 
 
