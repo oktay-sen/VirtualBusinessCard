@@ -29,7 +29,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(CardsAdapter.ViewHolder holder, int position) {
-        InformationCard card = data.get(0);
+        InformationCard card = data.get(position);
         holder.title.setText(card.getAll().get(0).second);
         holder.description.setText(card.getAll().get(1).second);
     }

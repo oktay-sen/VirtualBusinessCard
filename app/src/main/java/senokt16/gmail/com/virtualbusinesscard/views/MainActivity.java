@@ -29,6 +29,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
 import senokt16.gmail.com.virtualbusinesscard.util.RecyclerItemClickListener;
@@ -77,15 +78,21 @@ public class MainActivity extends AppCompatActivity {
         }));
 
 
+        final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:A Card!\nEM:mjh252@cam.ac.uk\nPH:07446880103\nFB:mike.hutch.56\n");
+        final InformationCard card1 = new InformationCard();
+        card1.add(CommunicationProtocol.NAME_PREFIX, "A created card");
+        card1.add(CommunicationProtocol.DESCRIPTION_PREFIX, "Another Card!");
+        card1.add(CommunicationProtocol.ADDRESS_PREFIX, "60 High Street, Ringstead, PE36 5JU");
+        card1.add(CommunicationProtocol.EMAIL_PREFIX, "mjh252@cam.ac.uk");
+        card1.add(CommunicationProtocol.FACEBOOK_PREFIX, "mike.hutch.56");
 
-        final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:Cambridge Student\nEM:mjh252@cam.ac.uk\nAD:123 Road\nPH:07521638203\nFB:mike.hutch56");
-
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                cardsDB.cardsDAO().insertCard(card);
-            }
-        });
+//        Executors.newSingleThreadExecutor().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                cardsDB.cardsDAO().insertCard(card);
+//                cardsDB.cardsDAO().insertCard(card1);
+//            }
+//        });
 
 
 
@@ -113,9 +120,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final List<InformationCard> cardback = cardsDB.cardsDAO().getAllCards();
-                Log.v("Data",cardback.get(0).getUUID());
-                List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
-                Log.v("Data",getByID.get(0).toString());
+                if(cardback.size() > 0) {
+                    Log.v("Data",cardback.get(0).getUUID());
+//                  List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
+//                  Log.v("Data",getByID.get(0).toString());
+                }
+                
                 Handler h = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message msg) {
@@ -176,7 +186,5 @@ public class MainActivity extends AppCompatActivity {
         Intent goToNextActivity = new Intent(getApplicationContext(), ProfileActivity.class);
         goToNextActivity.putExtra(CARDKEY, iC);
         startActivity(goToNextActivity);
-
     }
 }
-

@@ -20,10 +20,12 @@ public class InformationCard {
     @NonNull
     private String UUID;
     private ArrayList<Pair<String, String>> information;
+    private boolean created;
 
     public InformationCard(){
         UUID = java.util.UUID.randomUUID().toString();
         information = new ArrayList<>();
+        created = true;
     }
 
     public InformationCard(String data){
@@ -37,10 +39,13 @@ public class InformationCard {
                 add(parts[0], parts[1]);
             }
         }
+        created = false;
     }
 
     public InformationCard(ArrayList<Pair<String, String>> data){
+        UUID = java.util.UUID.randomUUID().toString();
         information = data;
+        created = false;
     }
 
     public void add(String key, String value){
@@ -60,11 +65,12 @@ public class InformationCard {
         return out.toString();
     }
 
+    @NonNull
     public String getUUID() {
         return UUID;
     }
 
-    public void setUUID(String UUID) {
+    public void setUUID(@NonNull String UUID) {
         this.UUID = UUID;
     }
 
@@ -74,5 +80,13 @@ public class InformationCard {
 
     public void setInformation(ArrayList<Pair<String, String>> information) {
         this.information = information;
+    }
+
+    public boolean isCreated() {
+        return created;
+    }
+
+    public void setCreated(boolean created) {
+        this.created = created;
     }
 }

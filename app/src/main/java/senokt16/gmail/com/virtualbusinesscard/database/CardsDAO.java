@@ -25,4 +25,7 @@ public interface CardsDAO {
 
     @Query("SELECT * FROM InformationCard where UUID=:UUID")
     List<InformationCard> getCardById(String UUID);
+
+    @Query("SELECT * FROM InformationCard where created=:created")
+    List<InformationCard> getCardsByCreated(boolean created);
 }
