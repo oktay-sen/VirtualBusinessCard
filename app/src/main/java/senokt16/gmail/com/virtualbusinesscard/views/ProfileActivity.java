@@ -167,7 +167,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         try {
-            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 100));
+            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 200));
         } catch (WriterException e) {
             e.printStackTrace();
         }
