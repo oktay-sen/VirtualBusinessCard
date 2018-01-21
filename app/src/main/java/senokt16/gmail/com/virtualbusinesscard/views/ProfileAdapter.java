@@ -134,7 +134,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
         }
 
         if (!editMode) {
-            edits.set(position, new Pair<>(currPair.first, holder.description.getText().toString()));
+            //edits.set(position, new Pair<>(currPair.first, holder.description.getText().toString()));
         }
 
         holder.description.setText(currPair.second);

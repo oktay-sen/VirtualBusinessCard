@@ -115,16 +115,15 @@ public class MainActivity extends AppCompatActivity {
         card1.add(CommunicationProtocol.INSTAGRAM_PREFIX, "abc123");
         card1.add(CommunicationProtocol.LINK_PREFIX, "www.linkedin.com/in/michael-hutchinson");
 
-//        Executors.newSingleThreadExecutor().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                cardsDB.cardsDAO().deleteAll();
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                cardsDB.cardsDAO().deleteAll();
 //                cardsDB.cardsDAO().insertCard(card);
-//                cardsDB.cardsDAO().insertCard(card1);
-//                cardsDB.cardsDAO().insertCard(card2);
-//                Log.v("INFO", cardsDB.cardsDAO().getAllCards().get(1).toString());
-//            }
-//        });
+                //cardsDB.cardsDAO().insertCard(card1);
+                cardsDB.cardsDAO().insertCard(card2);
+            }
+        });
 
 
 
