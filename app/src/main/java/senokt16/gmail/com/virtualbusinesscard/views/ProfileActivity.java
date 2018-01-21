@@ -191,7 +191,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setImageTranslation(float offset) {
         int totalHeight = getResources().getDisplayMetrics().heightPixels-Unit.dp(this,35);
-        int midY = totalHeight/4 - Unit.dp(this, MID_IMAGE_HEIGHT_DP) /2 + MIN_IMAGE_HEIGHT_PX;
+        int midY = totalHeight/4 - Unit.dp(this, MID_IMAGE_HEIGHT_DP) /2 + MIN_IMAGE_HEIGHT_PX/2;
         int maxY = totalHeight/2 - Unit.dp(this, MAX_IMAGE_HEIGHT_DP) /2;
         if (offset >= 0)
             imageWrapper.setTranslationY(midY * (1-offset));
@@ -215,8 +215,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -234,6 +232,11 @@ public class ProfileActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_edit) {
             //Do edit
+            if (((ProfileAdapter)contactDetails.getAdapter()).toggleEdit()) {
+                item.setIcon(R.drawable.ic_done_white_24dp);
+            } else {
+                item.setIcon(R.drawable.ic_edit_white_24dp);
+            }
             return true;
         }
 

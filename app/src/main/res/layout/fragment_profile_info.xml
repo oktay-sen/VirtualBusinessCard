@@ -41,9 +41,8 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical|end"
-        android:padding="24dp"
-        android:src="@drawable/ic_edit_black_24dp"
-        android:translationX="48dp"/>
+        android:padding="12dp"
+        android:src="@drawable/ic_edit_black_24dp"/>
 
     <View
         android:id="@+id/underline"

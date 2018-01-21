@@ -11,6 +11,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,20 +27,20 @@ import java.util.ArrayList;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
+import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 
 import static android.support.v4.content.ContextCompat.startActivity;
 import static senokt16.gmail.com.virtualbusinesscard.util.ContactUtils.newContactIntent;
 import static senokt16.gmail.com.virtualbusinesscard.util.DeepLinkUtils.*;
 
-/**
- * Created by Ian_Tai on 2018-01-20.
- */
 
 public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
     private InformationCard iC;
     private ArrayList<Pair<String,String>> allList;
     private Context context;
     private PackageManager pm;
+
+    private boolean editMode = false;
     public ProfileAdapter(InformationCard infoC, Context incContext) {
         iC = infoC;
         allList = iC.getAll();
@@ -112,21 +113,34 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
             break;
         }
 
-        holder.wrapper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(currIntent == null){
-                    return;
+        if (editMode) {
+            //holder.edit.startAnimation(AnimationUtils.loadAnimation(context, R.anim.edit_reveal));
+            holder.edit.setVisibility(View.VISIBLE);
+        } else {
+            //holder.edit.setTranslationX(Unit.dp(context, 48));
+            holder.edit.setVisibility(View.GONE);
+            holder.wrapper.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(currIntent == null){
+                        return;
+                    }
+                    context.startActivity(currIntent);
                 }
-                context.startActivity(currIntent);
-            }
-        });
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
         Log.v("items", allList.toString());
         return allList.size() - 2;
+    }
+
+    public boolean toggleEdit() {
+        editMode = !editMode;
+        notifyDataSetChanged();
+        return editMode;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
