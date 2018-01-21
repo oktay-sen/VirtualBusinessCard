@@ -1,15 +1,55 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     tools:context="senokt16.gmail.com.virtualbusinesscard.views.ProfileInfoFragment">
+    <FrameLayout
+        android:id="@+id/wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_margin="16dp"/>
 
-    <!-- TODO: Update blank fragment layout -->
-    <Button
-        android:id="@+id/button_link"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="left|center_vertical"
-        />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="64dp">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textColor="#000"/>
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                />
+        </LinearLayout>
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/action"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical|end"
+        android:padding="24dp"
+        android:src="@drawable/ic_edit_black_24dp"
+        android:translationX="48dp"/>
+
+    <View
+        android:id="@+id/underline"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="72dp"
+        android:layout_gravity="bottom"/>
 
 </FrameLayout>
