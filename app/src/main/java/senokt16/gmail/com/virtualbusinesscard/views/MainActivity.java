@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CARDKEY = "card";
     private static final String ID = "UUID";
+    private static final String CREATED = "CREATED";
     RecyclerView cardsView;
     private AppBarLayout appBar;
     ProgressBar loading;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 //TODO: Attach contact info.
                 Intent i = new Intent(MainActivity.this, ProfileActivity.class);
 
-                InformationCard getInfo = ((CardsAdapter)cardsView.getAdapter()).getSingleCard(position);
+                InformationCard getInfo = ((CardsAdapter)cardsView.getAdapter()).getSingleCard(pos);
 
                 i.putExtra(CARDKEY, getInfo.toString());
                 i.putExtra(ID, getInfo.getUUID());
@@ -80,17 +81,23 @@ public class MainActivity extends AppCompatActivity {
 
         final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:A Card!\nEM:mjh252@cam.ac.uk\nPH:07446880103\nFB:mike.hutch.56\n");
         final InformationCard card1 = new InformationCard();
-        card1.add(CommunicationProtocol.NAME_PREFIX, "A created card");
-        card1.add(CommunicationProtocol.DESCRIPTION_PREFIX, "Another Card!");
+        card1.add(CommunicationProtocol.NAME_PREFIX, "Michael Hutchinson");
+        card1.add(CommunicationProtocol.DESCRIPTION_PREFIX, "A nifty business card to transmit social media info!");
         card1.add(CommunicationProtocol.ADDRESS_PREFIX, "60 High Street, Ringstead, PE36 5JU");
         card1.add(CommunicationProtocol.EMAIL_PREFIX, "mjh252@cam.ac.uk");
+        card1.add(CommunicationProtocol.PHONE_PREFIX, "0744880103");
         card1.add(CommunicationProtocol.FACEBOOK_PREFIX, "mike.hutch.56");
+        card1.add(CommunicationProtocol.SNAPCHAT_PREFIX, "michaelhutchinson");
+        card1.add(CommunicationProtocol.LINK_PREFIX, "www.github.com/mjhutchinson");
+        card1.add(CommunicationProtocol.INSTAGRAM_PREFIX, "abc123");
 
 //        Executors.newSingleThreadExecutor().execute(new Runnable() {
 //            @Override
 //            public void run() {
+//                cardsDB.cardsDAO().deleteAll();
 //                cardsDB.cardsDAO().insertCard(card);
 //                cardsDB.cardsDAO().insertCard(card1);
+//                Log.v("INFO", cardsDB.cardsDAO().getAllCards().get(1).toString());
 //            }
 //        });
 
@@ -125,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 //                  List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
 //                  Log.v("Data",getByID.get(0).toString());
                 }
-                
+
                 Handler h = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message msg) {
@@ -141,6 +148,13 @@ public class MainActivity extends AppCompatActivity {
         appBar.getBackground().setAlpha(255);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    
 
     private void startQRScanner() {
         new IntentIntegrator(this).initiateScan();

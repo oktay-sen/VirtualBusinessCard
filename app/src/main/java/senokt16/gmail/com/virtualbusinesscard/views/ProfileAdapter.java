@@ -40,13 +40,14 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
     private ArrayList<Pair<String,String>> allList;
     private Context context;
     private PackageManager pm;
-
     private boolean editMode = false;
-    public ProfileAdapter(InformationCard infoC, Context incContext) {
+    private boolean isCreated;
+    public ProfileAdapter(InformationCard infoC, Context incContext, boolean created) {
         iC = infoC;
         allList = iC.getAll();
         context = incContext;
         pm = context.getPackageManager();
+        isCreated = created;
     }
 
     @Override
@@ -61,6 +62,10 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
         final Intent currIntent;
         Drawable icon;
         Log.v("Check", "arrivedAtViewHolder");
+
+        if(currPair.second.equals("") && !isCreated){
+            return;
+        }
         switch(currPair.first){
             case DESCRIPTION_PREFIX:
             holder.thumbnail.setVisibility(View.GONE);
@@ -122,6 +127,12 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
             holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("YouTube");
+            holder.description.setText(currPair.second);
+            break;
+            case LINK_PREFIX: currIntent = newLinkIntent(pm, currPair.second);
+            icon = context.getResources().getDrawable(R.drawable.ic_map_marker);
+            holder.thumbnail.setImageDrawable(icon);
+            holder.title.setText("Website");
             holder.description.setText(currPair.second);
             break;
             default: currIntent = null;
