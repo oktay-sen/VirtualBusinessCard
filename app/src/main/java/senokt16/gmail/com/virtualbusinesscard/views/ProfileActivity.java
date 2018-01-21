@@ -289,6 +289,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void editField(String fieldKey, String newData) {
         infoCard.replace(fieldKey, newData);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -310,10 +311,26 @@ public class ProfileActivity extends AppCompatActivity {
             if (editMode) {
                 item.setIcon(R.drawable.ic_done_white_24dp);
                 nameEditButton.setVisibility(View.VISIBLE);
-
             } else {
+                Executors.newSingleThreadExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.v("DBSave", "Saving...");
+                        infoCard.setCreated(created);
+                        cardsDB.cardsDAO().insertCard(infoCard);
+                        Log.v("DBSave", "Saved to DB");
+                        Handler h = new Handler(Looper.getMainLooper()) {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+
+                            }
+                        };
+                    }
+                });
                 item.setIcon(R.drawable.ic_edit_white_24dp);
                 nameEditButton.setVisibility(View.GONE);
+
             }
             return true;
         }

@@ -27,6 +27,7 @@ import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 import static senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
@@ -44,6 +45,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
     private PackageManager pm;
     private boolean editMode = false;
     private boolean isCreated;
+    private List<Pair<String, String>> edits = new ArrayList<>();
     public ProfileAdapter(InformationCard infoC, Context incContext, boolean created) {
         iC = infoC;
         allList = iC.getAll();
@@ -72,7 +74,6 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
             case DESCRIPTION_PREFIX:
             holder.thumbnail.setVisibility(View.GONE);
             holder.title.setVisibility(View.GONE);
-            holder.description.setText(currPair.second);
             currIntent = null;
             break;
             case EMAIL_PREFIX: currIntent = newContactIntent(iC);
@@ -80,66 +81,63 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setVisibility(View.VISIBLE);
             holder.title.setText("Email");
-            holder.description.setText(currPair.second);
             break;
             case ADDRESS_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_map_marker);
             holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Address");
-            holder.description.setText(currPair.second);
             break;
             case PHONE_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_phone_black_24dp);
             holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Phone");
-            holder.description.setText(currPair.second);
             break;
             case FACEBOOK_PREFIX: currIntent = newFacebookIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_facebook_box);
             holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Facebook");
-            holder.description.setText(currPair.second);
             break;
             case TWITTER_PREFIX: currIntent = newTwitterIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_twitter_box);
             holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Twitter");
-            holder.description.setText(currPair.second);
             break;
             case SNAPCHAT_PREFIX: currIntent = newSnapchatIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_snapchat);
             holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Snapchat");
-            holder.description.setText(currPair.second);
             break;
             case INSTAGRAM_PREFIX: currIntent = newInstagramIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_instagram);
             holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Instagram");
-            holder.description.setText(currPair.second);
             break;
             case YOUTUBE_PREFIX: currIntent = newYoutubeIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_youtube_play);
             holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("YouTube");
-            holder.description.setText(currPair.second);
             break;
             case LINK_PREFIX: currIntent = newLinkIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_link_black_24dp);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Website");
-            holder.description.setText(currPair.second);
             break;
             default: currIntent = null;
             break;
         }
+
+        if (!editMode) {
+            edits.set(position, new Pair<>(currPair.first, holder.description.getText().toString()));
+        }
+
+        holder.description.setText(currPair.second);
 
         if (currPair.first.equals(DESCRIPTION_PREFIX)) {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.textWrapper.getLayoutParams();
@@ -155,6 +153,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
             //holder.edit.startAnimation(AnimationUtils.loadAnimation(context, R.anim.edit_reveal));
             holder.edit.setVisibility(View.VISIBLE);
             holder.description.setKeyListener((KeyListener) holder.description.getTag());
+            holder.wrapper.setOnClickListener(null);
         } else {
             //holder.edit.setTranslationX(Unit.dp(context, 48));
             holder.edit.setVisibility(View.GONE);
