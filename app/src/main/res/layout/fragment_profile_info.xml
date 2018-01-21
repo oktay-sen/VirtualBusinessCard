@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     tools:context="senokt16.gmail.com.virtualbusinesscard.views.ProfileInfoFragment">
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -11,15 +11,16 @@
             android:id="@+id/thumbnail"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_gravity="center_vertical|start"
+            android:layout_centerVertical="true"
             android:layout_margin="16dp"/>
 
         <LinearLayout
+            android:id="@+id/text_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="64dp">
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/thumbnail">
 
             <TextView
                 android:id="@+id/title"
@@ -34,7 +35,16 @@
                 android:text="Description"
                 />
         </LinearLayout>
-    </FrameLayout>
+
+        <View
+            android:id="@+id/underline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@id/thumbnail"
+            android:background="#FF000000"
+            android:alpha="0.3"/>
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/action"
@@ -43,12 +53,5 @@
         android:layout_gravity="center_vertical|end"
         android:padding="12dp"
         android:src="@drawable/ic_edit_black_24dp"/>
-
-    <View
-        android:id="@+id/underline"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="72dp"
-        android:layout_gravity="bottom"/>
 
 </FrameLayout>

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -56,61 +57,85 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ProfileAdapter.ViewHolder holder, int position) {
-        Pair<String,String> currPair = allList.get(position+2);
+        Pair<String,String> currPair = allList.get(position+1);
         final Intent currIntent;
         Drawable icon;
         Log.v("Check", "arrivedAtViewHolder");
         switch(currPair.first){
+            case DESCRIPTION_PREFIX:
+            holder.thumbnail.setVisibility(View.GONE);
+            holder.title.setVisibility(View.GONE);
+            holder.description.setText(currPair.second);
+            currIntent = null;
+            break;
             case EMAIL_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_email_black_24dp);
             holder.thumbnail.setImageDrawable(icon);
+            holder.title.setVisibility(View.VISIBLE);
             holder.title.setText("Email");
             holder.description.setText(currPair.second);
             break;
             case ADDRESS_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_map_marker);
+            holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Address");
             holder.description.setText(currPair.second);
             break;
             case PHONE_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_phone_black_24dp);
+            holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Phone");
             holder.description.setText(currPair.second);
             break;
             case FACEBOOK_PREFIX: currIntent = newFacebookIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_facebook_box);
+            holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Facebook");
             holder.description.setText(currPair.second);
             break;
             case TWITTER_PREFIX: currIntent = newTwitterIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_twitter_box);
+            holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Twitter");
             holder.description.setText(currPair.second);
             break;
             case SNAPCHAT_PREFIX: currIntent = newSnapchatIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_snapchat);
+            holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Snapchat");
             holder.description.setText(currPair.second);
             break;
             case INSTAGRAM_PREFIX: currIntent = newInstagramIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_instagram);
+            holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("Instagram");
             holder.description.setText(currPair.second);
             break;
             case YOUTUBE_PREFIX: currIntent = newYoutubeIntent(pm, currPair.second);
             icon = context.getResources().getDrawable(R.drawable.ic_youtube_play);
+            holder.title.setVisibility(View.VISIBLE);
             holder.thumbnail.setImageDrawable(icon);
             holder.title.setText("YouTube");
             holder.description.setText(currPair.second);
             break;
             default: currIntent = null;
             break;
+        }
+
+        if (currPair.first.equals(DESCRIPTION_PREFIX)) {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.textWrapper.getLayoutParams();
+            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            holder.textWrapper.setLayoutParams(params);
+        } else {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.textWrapper.getLayoutParams();
+            params.removeRule(RelativeLayout.CENTER_HORIZONTAL);
+            holder.textWrapper.setLayoutParams(params);
         }
 
         if (editMode) {
@@ -129,12 +154,17 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
                 }
             });
         }
+        if (position == getItemCount()-1 || currPair.first.equals(DESCRIPTION_PREFIX)) {
+            holder.underline.setVisibility(View.INVISIBLE);
+        } else {
+            holder.underline.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public int getItemCount() {
         Log.v("items", allList.toString());
-        return allList.size() - 2;
+        return allList.size() - 1;
     }
 
     public boolean toggleEdit() {
@@ -147,7 +177,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
         ImageView thumbnail, edit;
         TextView title, description;
         View underline;
-        ViewGroup wrapper;
+        ViewGroup wrapper, textWrapper;
         public ViewHolder(View itemView) {
             super(itemView);
             thumbnail = itemView.findViewById(R.id.thumbnail);
@@ -156,6 +186,7 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
             edit = itemView.findViewById(R.id.action);
             underline = itemView.findViewById(R.id.underline);
             wrapper = itemView.findViewById(R.id.wrapper);
+            textWrapper = itemView.findViewById(R.id.text_wrapper);
         }
     }
 

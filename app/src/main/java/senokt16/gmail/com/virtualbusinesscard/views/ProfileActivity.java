@@ -1,6 +1,8 @@
 package senokt16.gmail.com.virtualbusinesscard.views;
 
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -8,17 +10,22 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -38,10 +45,12 @@ import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 public class ProfileActivity extends AppCompatActivity {
 
     private static final int MAX_IMAGE_HEIGHT_DP = 384;
-    private static final int MID_IMAGE_HEIGHT_DP = 128;
+    private static final int MID_IMAGE_HEIGHT_DP = 144;
     private static int MIN_IMAGE_HEIGHT_PX;
     private static final String CARDKEY = "card";
     private static final String ID = "UUID";
+
+    private boolean editMode = false;
 
     ImageView profileImage, qrImage;
     RelativeLayout imageWrapper;
@@ -54,6 +63,9 @@ public class ProfileActivity extends AppCompatActivity {
     FloatingActionButton fab;
     private static CardsDB cardsDB;
     private boolean fromCardsAdapter;
+    ImageView nameEditButton;
+    TextView name;
+    ViewGroup wrapper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +89,8 @@ public class ProfileActivity extends AppCompatActivity {
         imageWrapper = findViewById(R.id.image_wrapper);
         bottomSheet = findViewById(R.id.foreground);
         upButton = findViewById(R.id.button_up);
+        nameEditButton = findViewById(R.id.name_edit);
+        name = findViewById(R.id.name);
 
         final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
                 new int[] { android.R.attr.actionBarSize });
@@ -119,6 +133,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         final InformationCard card = new InformationCard(getIntent().getStringExtra(CARDKEY));
+
+        name.setText(card.getAll().get(0).second);
+
 
         contactDetails = findViewById(R.id.contact_details);
         contactDetails.setLayoutManager(new LinearLayoutManager(this));
@@ -163,7 +180,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         int color = generator.getColor(card.getAll().get(0).second);
 
-        profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color));
+        TextDrawable imageDrawable = TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color);
+        profileImage.setImageDrawable(imageDrawable);
 
 
         try {
@@ -171,6 +189,8 @@ public class ProfileActivity extends AppCompatActivity {
         } catch (WriterException e) {
             e.printStackTrace();
         }
+        wrapper = findViewById(R.id.wrapper);
+        //TODO: wrapper.setBackground(color);
     }
 
     private void setImageOpacity(float offset) {
@@ -232,10 +252,14 @@ public class ProfileActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_edit) {
             //Do edit
-            if (((ProfileAdapter)contactDetails.getAdapter()).toggleEdit()) {
+            editMode = ((ProfileAdapter)contactDetails.getAdapter()).toggleEdit();
+            if (editMode) {
                 item.setIcon(R.drawable.ic_done_white_24dp);
+                nameEditButton.setVisibility(View.VISIBLE);
+
             } else {
                 item.setIcon(R.drawable.ic_edit_white_24dp);
+                nameEditButton.setVisibility(View.GONE);
             }
             return true;
         }
