@@ -4,6 +4,9 @@ import android.app.ActivityOptions;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +22,7 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -33,10 +37,12 @@ import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private static final String CARDKEY = "card";
+    private static final String ID = "UUID";
     RecyclerView cardsView;
     private AppBarLayout appBar;
     ProgressBar loading;
+    InformationCard queryCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +51,21 @@ public class MainActivity extends AppCompatActivity {
 
         loading = findViewById(R.id.loading);
         cardsView = findViewById(R.id.cards_view);
-        cardsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        cardsView.addOnItemTouchListener(new RecyclerItemClickListener(this, cardsView, new RecyclerItemClickListener.OnItemClickListener() {
+        cardsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));cardsView.addOnItemTouchListener(new RecyclerItemClickListener(this, cardsView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                final int pos = position;
                 //TODO: Animated transition
                 //TODO: Attach contact info.
                 Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+
+                InformationCard getInfo = ((CardsAdapter)cardsView.getAdapter()).getSingleCard(position);
+
+                i.putExtra(CARDKEY, getInfo.toString());
+                i.putExtra(ID, getInfo.getUUID());
                 ActivityOptions options = ActivityOptions
                         .makeSceneTransitionAnimation(MainActivity.this, view.findViewById(R.id.thumbnail), "image");
+
                 startActivity(i, options.toBundle());
             }
 
@@ -64,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         // DataBase creation
-        final CardsDB cardsDB = Room.databaseBuilder(this, CardsDB.class, "CardsDB").fallbackToDestructiveMigration().build();
+        final CardsDB cardsDB = CardsDB.getInstance(this);
 
         final InformationCard card = new InformationCard("N:Michael Hutchinson\nD:A Card!\nEM:mjh252@cam.ac.uk\nPH:07446880103\nFB:mike.hutch.56\n");
         final InformationCard card1 = new InformationCard();
@@ -74,13 +86,12 @@ public class MainActivity extends AppCompatActivity {
         card1.add(CommunicationProtocol.EMAIL_PREFIX, "mjh252@cam.ac.uk");
         card1.add(CommunicationProtocol.FACEBOOK_PREFIX, "mike.hutch.56");
 
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
+//        Executors.newSingleThreadExecutor().execute(new Runnable() {
+//            @Override
 //                cardsDB.cardsDAO().insertCard(card);
 //                cardsDB.cardsDAO().insertCard(card1);
-            }
-        });
+//            }
+//        });
 //
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
@@ -89,19 +100,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.v("Data",cardback.get(0).getUUID());
 //                List<InformationCard> getByID = cardsDB.cardsDAO().getCardById(cardback.get(0).getUUID());
 //                Log.v("Data",getByID.get(0).toString());
-                loading.setVisibility(View.GONE);
-                cardsView.setAdapter(new CardsAdapter(cardback));
+                Handler h = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        loading.setVisibility(View.GONE);
+                        cardsView.setAdapter(new CardsAdapter(cardback));
+                    }
+                };
+                h.sendEmptyMessage(0);
             }
         });
-
-
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         appBar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
-        appBar.setElevation(Unit.dp(this, 8));
-        appBar.getBackground().setAlpha(255);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +127,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        appBar.setElevation(Unit.dp(this, 8));
+        appBar.getBackground().setAlpha(255);
     }
 
     @Override
@@ -150,10 +172,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Cancelled",Toast.LENGTH_SHORT).show();
             } else {
                 Log.d("QR Result", result.getContents());
-                Toast.makeText(this, result.getContents(),Toast.LENGTH_LONG).show();
+                showNew(result.getContents());
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+    private void showNew(String iC){
+        Intent goToNextActivity = new Intent(getApplicationContext(), ProfileActivity.class);
+        goToNextActivity.putExtra(CARDKEY, iC);
+        startActivity(goToNextActivity);
     }
 }

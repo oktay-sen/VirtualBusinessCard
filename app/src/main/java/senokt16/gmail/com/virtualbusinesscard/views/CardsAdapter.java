@@ -50,4 +50,15 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             thubmnail = view.findViewById(R.id.thumbnail);
         }
     }
+    public List<InformationCard> getCards(){
+        return data;
+    }
+    public InformationCard getSingleCard(int pos) {
+        if(pos >= data.size()) {
+            return null;
+        }
+        else{
+            return data.get(pos);
+        }
+    }
 }

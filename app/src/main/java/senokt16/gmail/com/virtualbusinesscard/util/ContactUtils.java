@@ -13,7 +13,9 @@ import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 
 public class ContactUtils {
 
+
     public static Intent newContactIntent(InformationCard informationCard){
+
 
         Intent intent = new Intent(Intent.ACTION_INSERT);
         intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
@@ -21,6 +23,7 @@ public class ContactUtils {
         int addresses = 0;
         int emails = 0;
         int phones = 0;
+
 
         for(Pair<String, String> pair : informationCard.getAll()){
             switch (pair.first){
