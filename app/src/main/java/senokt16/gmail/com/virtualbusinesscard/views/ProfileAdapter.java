@@ -3,9 +3,11 @@ package senokt16.gmail.com.virtualbusinesscard.views;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,7 +18,15 @@ import java.util.ArrayList;
 import senokt16.gmail.com.virtualbusinesscard.R;
 import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
 
+import static senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol.*;
+
+import java.util.ArrayList;
+
+import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
+
 import static android.support.v4.content.ContextCompat.startActivity;
+import static senokt16.gmail.com.virtualbusinesscard.util.ContactUtils.newContactIntent;
 import static senokt16.gmail.com.virtualbusinesscard.util.DeepLinkUtils.*;
 
 /**
@@ -37,32 +47,56 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
 
     @Override
     public ProfileAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        return null;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_info, parent, false);
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ProfileAdapter.ViewHolder holder, int position) {
         Pair<String,String> currPair = allList.get(position+2);
         final Intent currIntent;
-
+        Drawable icon;
 
         switch(currPair.first){
-            case "EM": currIntent = null;
+            case EMAIL_PREFIX: currIntent = newContactIntent(iC);
+            icon = context.getResources().getDrawable(R.drawable.ic_email_black_24dp);
+            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+            holder.button.setText("Email: " + currPair.second);
             break;
-            case "AD": currIntent = null;
+            case ADDRESS_PREFIX: currIntent = newContactIntent(iC);
+            icon = context.getResources().getDrawable(R.drawable.ic_map_marker);
+            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+            holder.button.setText("Address: " + currPair.second);
             break;
-            case "PH": currIntent = null;
+            case PHONE_PREFIX: currIntent = newContactIntent(iC);
+            icon = context.getResources().getDrawable(R.drawable.ic_phone_black_24dp);
+            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+            holder.button.setText("Phone: " + currPair.second);
             break;
-            case "FB": currIntent = newFacebookIntent(pm, currPair.second);
+            case FACEBOOK_PREFIX: currIntent = newFacebookIntent(pm, currPair.second);
+            icon = context.getResources().getDrawable(R.drawable.ic_facebook_box);
+            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+            holder.button.setText("Facebook: " + currPair.second);
             break;
-            case "TW": currIntent = newTwitterIntent(pm, currPair.second);
+            case TWITTER_PREFIX: currIntent = newTwitterIntent(pm, currPair.second);
+            icon = context.getResources().getDrawable(R.drawable.ic_twitter_box);
+            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+            holder.button.setText("Twitter: " + currPair.second);
             break;
-            case "SC": currIntent = newSnapchatIntent(pm, currPair.second);
+            case SNAPCHAT_PREFIX: currIntent = newSnapchatIntent(pm, currPair.second);
+            icon = context.getResources().getDrawable(R.drawable.ic_snapchat);
+            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+            holder.button.setText("Snapchat: " + currPair.second);
             break;
-            case "IG": currIntent = newInstagramIntent(pm, currPair.second);
+            case INSTAGRAM_PREFIX: currIntent = newInstagramIntent(pm, currPair.second);
+            icon = context.getResources().getDrawable(R.drawable.ic_instagram);
+            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+            holder.button.setText("Instagram: " + currPair.second);
             break;
-            case "YT": currIntent = newYoutubeIntent(pm, currPair.second);
+            case YOUTUBE_PREFIX: currIntent = newYoutubeIntent(pm, currPair.second);
+            icon = context.getResources().getDrawable(R.drawable.ic_youtube_play);
+            holder.button.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+            holder.button.setText("Youtube: " + currPair.second);
             break;
             default: currIntent = null;
             break;

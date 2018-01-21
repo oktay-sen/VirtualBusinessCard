@@ -1,6 +1,7 @@
 package senokt16.gmail.com.virtualbusinesscard.views;
 
 import android.app.ActivityOptions;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,10 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.concurrent.Executors;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
+import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
+import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
 import senokt16.gmail.com.virtualbusinesscard.util.RecyclerItemClickListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +34,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // DataBase creation
+        final CardsDB cardsDB = Room.databaseBuilder(this, CardsDB.class, "CardsDB").build();
+
+        final InformationCard card = new InformationCard("N:Michael Hutchinson\nEM:mjh252@cam.ac.uk");
+
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                cardsDB.cardsDAO().insertCard(card);
+            }
+        });
+
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                final InformationCard cardback = cardsDB.cardsDAO().getAllCards().get(0);
+                Log.v("Data",cardback.toString());
+            }
+        });
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -100,10 +126,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Cancelled",Toast.LENGTH_SHORT).show();
             } else {
                 Log.d("QR Result", result.getContents());
-                Toast.makeText(this, result.getContents(),Toast.LENGTH_LONG).show();
+                showNew(result.getContents());
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+    private void showNew(String iC){
+        Intent goToNextActivity = new Intent(getApplicationContext(), ProfileActivity.class);
+        goToNextActivity.putExtra("card", iC);
+        startActivity(goToNextActivity);
+
+    }
 }
+
