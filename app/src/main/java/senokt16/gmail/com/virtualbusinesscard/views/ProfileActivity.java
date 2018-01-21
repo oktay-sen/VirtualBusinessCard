@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.zxing.WriterException;
 
 import java.util.concurrent.Executors;
@@ -122,6 +124,19 @@ public class ProfileActivity extends AppCompatActivity {
         contactDetails.setAdapter(new ProfileAdapter(card, this));
         fromCardsAdapter = getIntent().hasExtra(ID);
         Log.v("Has UUID", Boolean.toString(fromCardsAdapter));
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        String[] names = card.getAll().get(0).second.split(" ");
+        StringBuilder initials = new StringBuilder();
+        for (String s:names) {
+            initials.append(s.charAt(0));
+        }
+
+        int color = generator.getColor(card.getAll().get(0).second);
+
+        profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color));
+
 
         try {
             qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 100));
