@@ -1,11 +1,15 @@
 package senokt16.gmail.com.virtualbusinesscard.views;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 
 import java.util.List;
 
@@ -32,6 +36,18 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         InformationCard card = data.get(position);
         holder.title.setText(card.getAll().get(0).second);
         holder.description.setText(card.getAll().get(1).second);
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        String[] names = card.getAll().get(0).second.split(" ");
+        StringBuilder initials = new StringBuilder();
+        for (String s:names) {
+            initials.append(s.charAt(0));
+        }
+
+        int color = generator.getColor(card.getAll().get(0).second);
+
+        holder.thubmnail.setImageDrawable(TextDrawable.builder().buildRound(initials.toString(), color));
     }
 
     @Override

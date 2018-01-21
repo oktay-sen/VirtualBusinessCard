@@ -39,11 +39,13 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
     private ArrayList<Pair<String,String>> allList;
     private Context context;
     private PackageManager pm;
-    public ProfileAdapter(InformationCard infoC, Context incContext) {
+    private boolean isCreated;
+    public ProfileAdapter(InformationCard infoC, Context incContext, boolean created) {
         iC = infoC;
         allList = iC.getAll();
         context = incContext;
         pm = context.getPackageManager();
+        isCreated = created;
     }
 
     @Override
@@ -58,6 +60,10 @@ public class ProfileAdapter extends Adapter<ProfileAdapter.ViewHolder> {
         final Intent currIntent;
         Drawable icon;
         Log.v("Check", "arrivedAtViewHolder");
+
+        if(currPair.second.equals("") && !isCreated){
+            return;
+        }
         switch(currPair.first){
             case EMAIL_PREFIX: currIntent = newContactIntent(iC);
             icon = context.getResources().getDrawable(R.drawable.ic_email_black_24dp);

@@ -2,6 +2,9 @@ package senokt16.gmail.com.virtualbusinesscard.views;
 
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
@@ -18,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.zxing.WriterException;
 import static senokt16.gmail.com.virtualbusinesscard.card.CommunicationProtocol.*;
 import java.util.concurrent.Executors;
@@ -38,6 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static int MIN_IMAGE_HEIGHT_PX;
     private static final String CARDKEY = "card";
     private static final String ID = "UUID";
+    public static final String CREATED = "CREATED";
 
     ImageView profileImage, qrImage;
     RelativeLayout imageWrapper;
@@ -52,6 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static CardsDB cardsDB;
     private boolean fromCardsAdapter;
     private boolean edited;
+    private boolean created;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,12 +123,17 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        final InformationCard card = new InformationCard(getIntent().getStringExtra(CARDKEY));
+        created = getIntent().getBooleanExtra(CREATED, false);
         contactDetails = findViewById(R.id.contact_details);
         contactDetails.setLayoutManager(new LinearLayoutManager(this));
+
         infoCard = new InformationCard(getIntent().getStringExtra(CARDKEY));
-        contactDetails.setAdapter(new ProfileAdapter(infoCard, this));
+        contactDetails.setAdapter(new ProfileAdapter(infoCard, this, created));
+
         fromCardsAdapter = getIntent().hasExtra(ID);
         Log.v("Has UUID", Boolean.toString(fromCardsAdapter));
+
         fab = findViewById(R.id.fab);
         if(fromCardsAdapter) {
             fab.setVisibility(View.GONE);
@@ -134,20 +146,48 @@ public class ProfileActivity extends AppCompatActivity {
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 fab.setVisibility(View.GONE);
-                Snackbar.make(view, "Saving Card...", Snackbar.LENGTH_LONG)
+                //NOTE: not definitely saved yet
+                Snackbar.make(view, "Saved", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Executors.newSingleThreadExecutor().execute(new Runnable() {
                     @Override
                     public void run() {
                         Log.v("DBSave", "Saving...");
-                        cardsDB.cardsDAO().insertCard(infoCard);
+                        card.setCreated(created);
+                        cardsDB.cardsDAO().insertCard(card);
                         Log.v("DBSave", "Saved to DB");
+                        Handler h = new Handler(Looper.getMainLooper()) {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+
+                            }
+                        };
                     }
                 });
             }
         });
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        String[] names = card.getAll().get(0).second.split(" ");
+        StringBuilder initials = new StringBuilder();
+        for (String s:names) {
+            initials.append(s.charAt(0));
+        }
+
+        int color = generator.getColor(card.getAll().get(0).second);
+
+        profileImage.setImageDrawable(TextDrawable.builder().beginConfig().height(Unit.dp(this,128)).width(Unit.dp(this,128)).endConfig().buildRound(initials.toString(), color));
+
+
+        try {
+            qrImage.setImageBitmap(QRUtils.TextToImageEncode(this, card.toString(), 100));
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setImageOpacity(float offset) {
@@ -192,7 +232,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void editField(String fieldKey, String newData){
+    public void editField(String fieldKey, String newData){
         infoCard.replace(fieldKey, newData);
     }
 }

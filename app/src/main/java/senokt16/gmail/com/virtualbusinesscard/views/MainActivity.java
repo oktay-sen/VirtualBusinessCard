@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CARDKEY = "card";
     private static final String ID = "UUID";
+    private static final String CREATED = "CREATED";
     RecyclerView cardsView;
     private AppBarLayout appBar;
     ProgressBar loading;
@@ -156,7 +157,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.account_profile) {
+            Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+
+            i.putExtra(CREATED, true);
             return true;
         }
 

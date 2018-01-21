@@ -26,7 +26,18 @@ public class InformationCard {
     public InformationCard(){
         UUID = java.util.UUID.randomUUID().toString();
         information = new ArrayList<>();
+        add(CommunicationProtocol.NAME_PREFIX, "");
+        add(CommunicationProtocol.DESCRIPTION_PREFIX, "");
+        add(CommunicationProtocol.EMAIL_PREFIX, "");
+        add(CommunicationProtocol.ADDRESS_PREFIX, "");
+        add(CommunicationProtocol.PHONE_PREFIX, "");
+        add(CommunicationProtocol.FACEBOOK_PREFIX, "");
+        add(CommunicationProtocol.TWITTER_PREFIX, "");
+        add(CommunicationProtocol.SNAPCHAT_PREFIX, "");
+        add(CommunicationProtocol.INSTAGRAM_PREFIX, "");
+        add(CommunicationProtocol.YOUTUBE_PREFIX, "");
         created = true;
+
     }
 
     public InformationCard(String data){
