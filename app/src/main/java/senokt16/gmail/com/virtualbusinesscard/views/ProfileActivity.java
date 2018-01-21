@@ -9,6 +9,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +23,11 @@ import com.google.zxing.WriterException;
 import java.util.concurrent.Executors;
 
 import senokt16.gmail.com.virtualbusinesscard.R;
+
+import senokt16.gmail.com.virtualbusinesscard.card.InformationCard;
+
 import senokt16.gmail.com.virtualbusinesscard.database.CardsDB;
+
 import senokt16.gmail.com.virtualbusinesscard.util.QRUtils;
 import senokt16.gmail.com.virtualbusinesscard.util.Unit;
 
@@ -30,6 +36,8 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int MAX_IMAGE_HEIGHT_DP = 384;
     private static final int MID_IMAGE_HEIGHT_DP = 128;
     private static int MIN_IMAGE_HEIGHT_PX;
+    private static final String CARDKEY = "card";
+    private static final String ID = "UUID";
 
     ImageView profileImage, qrImage;
     RelativeLayout imageWrapper;
@@ -38,7 +46,9 @@ public class ProfileActivity extends AppCompatActivity {
     Toolbar toolbar;
     AppBarLayout appBar;
     ViewGroup upButton;
+    private RecyclerView contactDetails;
 
+    private boolean fromCardsAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +119,12 @@ public class ProfileActivity extends AppCompatActivity {
                 behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
+
+        contactDetails = findViewById(R.id.contact_details);
+        contactDetails.setLayoutManager(new LinearLayoutManager(this));
+        contactDetails.setAdapter(new ProfileAdapter(new InformationCard(getIntent().getStringExtra(CARDKEY)), this));
+        fromCardsAdapter = getIntent().hasExtra(ID);
+        Log.v("Has UUID", Boolean.toString(fromCardsAdapter));
     }
 
     private void setImageOpacity(float offset) {

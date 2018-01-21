@@ -5,6 +5,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -12,9 +13,9 @@ import java.util.UUID;
  * Created by mjhutchinson on 20/01/18.
  */
 
+
 @Entity
 public class InformationCard {
-
     @PrimaryKey
     @NonNull
     private String UUID;
@@ -26,6 +27,7 @@ public class InformationCard {
     }
 
     public InformationCard(String data){
+
         UUID = java.util.UUID.randomUUID().toString();
         information = new ArrayList<>();
         String[] strings = data.split(CommunicationProtocol.NEW_LINE);
@@ -44,6 +46,7 @@ public class InformationCard {
     public void add(String key, String value){
         information.add(new Pair<String, String>(key, value));
     }
+
 
     public ArrayList<Pair<String, String>> getAll(){
         return information;
